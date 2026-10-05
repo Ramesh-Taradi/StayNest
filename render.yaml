@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: staynest
+    runtime: java
+    plan: free
+    region: ohio
+    buildCommand: ./mvnw clean package -DskipTests
+    startCommand: java -jar target/StayNest-0.0.1-SNAPSHOT.jar
+    envVars:
+      - key: SPRING_DATASOURCE_URL
+        value: jdbc:postgresql://ep-purple-king-b525p8oc-pooler.c-7.us-east-2.aws.neon.tech/neondb?sslmode=require
+      - key: SPRING_DATASOURCE_USERNAME
+        value: neondb_owner
+      - key: SPRING_DATASOURCE_PASSWORD
+        value: npg_4nP0buAJCQFy
