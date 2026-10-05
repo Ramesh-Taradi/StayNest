@@ -1,0 +1,258 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title th:text="${pg != null ? pg.name + ' | StayNest' : 'PG Details | StayNest'}">PG Details | StayNest</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" th:href="@{/css/style.css}">
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'Manrope',sans-serif;background:#f0f6ff;}
+    header{background:#0f172a;position:sticky;top:0;z-index:100;box-shadow:0 2px 12px rgba(0,0,0,.3);}
+    .nav-wrap{max-width:1200px;margin:0 auto;padding:0 28px;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;height:64px;}
+    .logo{color:white;font-size:1.45rem;font-weight:800;text-decoration:none;display:flex;align-items:center;}
+    .logo span{color:#60a5fa;}
+    nav{display:flex;gap:28px;align-items:center;justify-content:center;}
+    nav a{color:#94a3b8;text-decoration:none;font-weight:600;font-size:0.92rem;transition:color .2s;}
+    nav a:hover{color:white;}
+    .btn-login{border:1.5px solid rgba(255,255,255,.25);padding:7px 16px;border-radius:8px;}
+    .btn-signup{background:#2563eb;color:white!important;padding:8px 20px;border-radius:9px;font-weight:700;}
+
+    .wrap{max-width:1100px;margin:0 auto;padding:0 28px;}
+    .breadcrumb{padding:14px 0 12px;font-size:0.85rem;color:#64748b;}
+    .breadcrumb a{color:#2563eb;text-decoration:none;font-weight:600;}
+    .breadcrumb a:hover{text-decoration:underline;}
+    .hero-img-wrap{width:100%;height:220px;border-radius:16px;overflow:hidden;margin-bottom:24px;background:linear-gradient(135deg,#667eea,#764ba2);display:flex;align-items:center;justify-content:center;color:white;font-size:3.5rem;box-shadow:0 4px 20px rgba(0,0,0,.08);position:relative;}
+    .hero-img-wrap img{width:100%;height:100%;object-fit:cover;object-position:center 35%;display:block;}
+    .layout{display:grid;grid-template-columns:1fr 320px;gap:28px;margin-bottom:40px;}
+    .main-col{display:flex;flex-direction:column;gap:22px;}
+    .card{background:white;border-radius:16px;padding:28px;box-shadow:0 4px 20px rgba(0,0,0,.07);}
+    .card h2{font-size:1.25rem;color:#0f172a;margin-bottom:18px;}
+    .pg-name{font-size:1.9rem;font-weight:800;color:#0f172a;margin-bottom:6px;}
+    .pg-location{color:#64748b;font-size:0.95rem;margin-bottom:16px;}
+    .tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px;}
+    .tag{background:#eff6ff;color:#2563eb;padding:5px 14px;border-radius:20px;font-size:0.82rem;font-weight:700;}
+    .room-item{border:1.5px solid #e2e8f0;border-radius:12px;padding:18px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center;transition:border .2s;}
+    .room-item:hover{border-color:#2563eb;}
+    .room-info h4{margin:0 0 4px;color:#0f172a;font-size:1rem;}
+    .room-info p{margin:0;font-size:0.85rem;color:#64748b;}
+    .avail{margin-top:4px;font-size:0.82rem;}
+    .avail.ok{color:#16a34a;font-weight:700;}
+    .avail.full{color:#dc2626;font-weight:700;}
+    .room-rent{text-align:right;}
+    .room-rent .price{font-size:1.15rem;font-weight:800;color:#2563eb;}
+    .room-rent .price small{font-size:0.75rem;font-weight:500;color:#64748b;}
+    .btn-book-sm{display:inline-block;margin-top:8px;padding:8px 18px;background:#2563eb;color:white;border-radius:8px;text-decoration:none;font-weight:700;font-size:0.85rem;transition:background .2s;}
+    .btn-book-sm:hover{background:#1d4ed8;}
+    .btn-book-sm.disabled{background:#e2e8f0;color:#94a3b8;cursor:not-allowed;}
+    .review-item{padding:16px 0;border-bottom:1px solid #f1f5f9;}
+    .review-item:last-child{border-bottom:none;}
+    .reviewer{font-weight:700;color:#0f172a;margin-bottom:4px;}
+    .stars{color:#f59e0b;font-size:1rem;margin-bottom:6px;}
+    .review-text{color:#64748b;font-size:0.9rem;line-height:1.6;}
+    .no-data{color:#94a3b8;text-align:center;padding:28px;font-size:0.9rem;}
+    .review-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;}
+    .btn-review{color:#2563eb;font-weight:700;text-decoration:none;font-size:0.9rem;}
+
+    /* Price sticky box */
+    .price-box{position:sticky;top:80px;}
+    .price-card{background:white;border-radius:16px;padding:26px;box-shadow:0 4px 24px rgba(37,99,235,.12);border:2px solid #eff6ff;}
+    .price-from{color:#64748b;font-size:0.82rem;margin-bottom:4px;}
+    .price-big{font-size:2.2rem;font-weight:800;color:#2563eb;margin-bottom:4px;}
+    .price-big small{font-size:1rem;font-weight:500;color:#64748b;}
+    .perks-list{background:#f8fafc;border-radius:10px;padding:14px;margin:16px 0;}
+    .perks-list div{padding:5px 0;font-size:0.88rem;color:#374151;}
+    .btn-main{display:block;width:100%;padding:14px;background:#2563eb;color:white;border:none;border-radius:10px;font-size:1rem;font-weight:700;cursor:pointer;text-align:center;text-decoration:none;transition:background .2s;font-family:'Manrope',sans-serif;margin-bottom:10px;}
+    .btn-main:hover{background:#1d4ed8;}
+    .btn-back{display:block;text-align:center;color:#64748b;font-size:0.85rem;text-decoration:none;margin-top:8px;}
+    .btn-back:hover{color:#2563eb;}
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="nav-wrap">
+    <!-- LEFT: Logo -->
+    <div style="display:flex; align-items:center; justify-content:flex-start;">
+      <a th:href="@{/}" class="logo">
+        <img th:src="@{/assets/logo2.png}" alt="StayNest" class="logo-img">
+      </a>
+    </div>
+
+    <!-- CENTER: Navigation links (Centered) -->
+    <nav>
+      <a th:href="@{/}">Home</a>
+      <a th:href="@{/pgs}" style="color:white;font-weight:700;">Find PG</a>
+      <a th:if="${isLoggedIn}" th:href="@{/bookings}">My Bookings</a>
+      <a th:if="${isLoggedIn}" th:href="@{/favorites}">Favorites</a>
+    </nav>
+
+    <!-- RIGHT: Profile Button (or Login / Sign Up) -->
+    <div style="display:flex; align-items:center; justify-content:flex-end; gap:10px;">
+      <!-- Profile Button: ONLY SHOWN AFTER LOGIN -->
+      <div th:if="${isLoggedIn}" class="profile-dropdown">
+        <a th:href="@{/profile}" class="profile-btn">
+          <span style="display:inline-block;width:22px;height:22px;border-radius:50%;background:#2563eb;color:white;text-align:center;line-height:22px;font-size:11px;font-weight:800;"
+                th:text="${currentUser != null ? #strings.substring(currentUser, 0, 1).toUpperCase() : 'U'}">U</span>
+          <span>Profile &#9660;</span>
+        </a>
+        <div class="profile-menu">
+          <div style="padding:10px 18px;font-size:11px;color:#94a3b8;border-bottom:1px solid rgba(255,255,255,0.1);">
+            Signed in as<br>
+            <strong style="color:white;font-size:12px;" th:text="${currentUser}">user@example.com</strong>
+          </div>
+          <a th:href="@{/profile}">&#128100; My Profile</a>
+          <a th:href="@{/bookings}">&#128215; My Bookings</a>
+          <a th:href="@{/favorites}">&#9829; Favorites</a>
+          <hr>
+          <a th:href="@{/logout}" style="color:#f87171!important;">&#128682; Logout</a>
+        </div>
+      </div>
+
+      <!-- Auth Buttons (Login / Sign Up): ONLY SHOWN WHEN NOT LOGGED IN -->
+      <div th:unless="${isLoggedIn}" style="display:flex;gap:10px;align-items:center;">
+        <a th:href="@{/login}" class="btn-login">Login</a>
+        <a th:href="@{/register}" class="btn-signup">Sign Up</a>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <!-- Breadcrumb -->
+  <div class="breadcrumb">
+    <a th:href="@{/}">Home</a> &rsaquo;
+    <a th:href="@{/pgs}">Find PG</a> &rsaquo;
+    <span th:text="${pg != null ? pg.name : 'Details'}">PG Name</span>
+  </div>
+
+  <!-- Hero Image -->
+  <div class="hero-img-wrap">
+    <img th:if="${pg != null and pg.imageUrl != null and !pg.imageUrl.isEmpty()}"
+         th:src="${pg.imageUrl}" th:alt="${pg.name}">
+    <span th:unless="${pg != null and pg.imageUrl != null and !pg.imageUrl.isEmpty()}">🏠</span>
+  </div>
+
+  <div class="layout" th:if="${pg != null}">
+
+    <!-- LEFT: Details + Rooms + Reviews -->
+    <div class="main-col">
+
+      <!-- PG Info -->
+      <div class="card">
+        <div class="pg-name" th:text="${pg.name}">PG Name</div>
+        <div class="pg-location">📍 <span th:text="${pg.location}">Location</span></div>
+        <p style="color:#64748b;line-height:1.7;">
+          A comfortable and well-maintained PG accommodation with all modern amenities.
+          Ideal for students and working professionals looking for affordable stays.
+        </p>
+        <div class="tags">
+          <span class="tag">✓ Verified</span>
+          <span class="tag">✓ Furnished</span>
+          <span class="tag">✓ Wi-Fi</span>
+          <span class="tag">✓ 24/7 Security</span>
+          <span class="tag">✓ Meals Available</span>
+        </div>
+      </div>
+
+      <!-- Rooms -->
+      <div class="card">
+        <h2>🛏 Available Rooms</h2>
+
+        <div th:each="room : ${rooms}" class="room-item">
+          <div class="room-info">
+            <h4 th:text="${room.type}">Room Type</h4>
+            <p>Total: <span th:text="${room.totalRooms}">0</span> rooms</p>
+            <div class="avail ok" th:if="${room.availableRooms > 0}">
+              ✓ Available: <span th:text="${room.availableRooms}">0</span> / <span th:text="${room.totalRooms}">0</span>
+            </div>
+            <div class="avail full" th:unless="${room.availableRooms > 0}">
+              ✗ Fully Booked
+            </div>
+          </div>
+          <div class="room-rent">
+            <div class="price">₹<span th:text="${room.rent}">0</span><small>/mo</small></div>
+            <a th:if="${room.availableRooms > 0 and isLoggedIn}"
+               class="btn-book-sm"
+               th:href="@{/bookings/new(roomId=${room.id})}">Book Now</a>
+            <a th:if="${room.availableRooms > 0 and not isLoggedIn}"
+               class="btn-book-sm"
+               style="background:#0f172a;"
+               th:href="@{/login}">Login to Book</a>
+            <span th:unless="${room.availableRooms > 0}" class="btn-book-sm disabled">Fully Booked</span>
+          </div>
+        </div>
+
+        <div class="no-data" th:if="${#lists.isEmpty(rooms)}">No rooms listed for this PG yet.</div>
+      </div>
+
+      <!-- Reviews -->
+      <div class="card">
+        <div class="review-header">
+          <h2>⭐ Reviews</h2>
+          <a th:if="${isLoggedIn}" th:href="@{/pgs/{pgId}/reviews/new(pgId=${pg.id})}" class="btn-review">+ Write a Review</a>
+          <a th:unless="${isLoggedIn}" th:href="@{/login}" class="btn-review">+ Login to Review</a>
+        </div>
+
+        <div th:each="review : ${reviews}" class="review-item">
+          <div class="reviewer" th:text="${review.name}">Reviewer Name</div>
+          <div class="stars">
+            <span th:each="i : ${#numbers.sequence(1, review.rating)}">★</span>
+            <span th:each="i : ${#numbers.sequence(review.rating + 1, 5)}" style="color:#e2e8f0;">★</span>
+            <span style="color:#64748b;font-size:0.82rem;margin-left:6px;" th:text="${review.rating} + '/5'"></span>
+          </div>
+          <div class="review-text" th:text="${review.comment}">Review text</div>
+        </div>
+
+        <div class="no-data" th:if="${#lists.isEmpty(reviews)}">
+          No reviews yet. 
+          <a th:if="${isLoggedIn}" th:href="@{/pgs/{pgId}/reviews/new(pgId=${pg.id})}" style="color:#2563eb;font-weight:700;">Be the first to review!</a>
+          <a th:unless="${isLoggedIn}" th:href="@{/login}" style="color:#2563eb;font-weight:700;">Login to be the first to review!</a>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- RIGHT: Price Box -->
+    <div class="price-box">
+      <div class="price-card">
+        <div class="price-from">Starting from</div>
+        <div class="price-big">₹<span th:text="${pg.rent}">0</span> <small>/ month</small></div>
+
+        <div class="perks-list">
+          <div>✓ Verified Listing</div>
+          <div>✓ Secure Booking</div>
+          <div>✓ Transparent Pricing</div>
+          <div>✓ 24/7 Support</div>
+        </div>
+
+        <!-- Book button (requires login) -->
+        <a class="btn-main"
+           th:if="${not #lists.isEmpty(rooms) and rooms[0].availableRooms > 0 and isLoggedIn}"
+           th:href="@{/bookings/new(roomId=${rooms[0].id})}">
+          Book Now
+        </a>
+        <a class="btn-main"
+           th:if="${not #lists.isEmpty(rooms) and rooms[0].availableRooms > 0 and not isLoggedIn}"
+           style="background:#0f172a;"
+           th:href="@{/login}">
+          Login to Book
+        </a>
+        <span class="btn-main" th:if="${#lists.isEmpty(rooms) or rooms[0].availableRooms == 0}"
+              style="background:#e2e8f0;color:#94a3b8;cursor:not-allowed;">
+          No Rooms Available
+        </span>
+
+        <a th:href="@{/pgs}" class="btn-back">← Back to All PGs</a>
+      </div>
+    </div>
+
+  </div><!-- /layout -->
+
+</div><!-- /wrap -->
+
+</body>
+</html>

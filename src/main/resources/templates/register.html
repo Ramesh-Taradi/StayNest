@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Register - StayNest</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Inter', sans-serif; background: #f0f6ff; min-height: 100vh; display: flex; flex-direction: column; }
+        .navbar {
+            display: flex; align-items: center; justify-content: space-between;
+            background: #0f172a; height: 60px; padding: 0 48px;
+        }
+        .nav-logo { color: #fff; font-size: 1.45rem; font-weight: 800; text-decoration: none; }
+        .nav-back { color: rgba(255,255,255,.75); font-size: 0.88rem; text-decoration: none; }
+        .nav-back:hover { color: #fff; }
+
+        .page { flex: 1; display: flex; align-items: center; justify-content: center; padding: 40px 20px; }
+        .card {
+            background: #fff; border-radius: 18px; padding: 42px 40px;
+            width: 100%; max-width: 420px;
+            box-shadow: 0 8px 40px rgba(37,99,235,.1);
+        }
+        .card-title { font-size: 1.55rem; font-weight: 800; color: #0f172a; margin-bottom: 6px; }
+        .card-sub { font-size: 0.88rem; color: #64748b; margin-bottom: 28px; }
+        .form-group { margin-bottom: 18px; }
+        label { display: block; font-size: 0.85rem; font-weight: 600; color: #374151; margin-bottom: 7px; }
+        input[type="text"], input[type="email"], input[type="password"] {
+            width: 100%; padding: 11px 14px; border: 1.5px solid #e2e8f0;
+            border-radius: 9px; font-size: 0.93rem; color: #111827;
+            outline: none; transition: border .2s;
+        }
+        input:focus { border-color: #2563eb; box-shadow: 0 0 0 3px rgba(37,99,235,.1); }
+        .btn-submit {
+            width: 100%; padding: 13px; background: #2563eb; color: #fff;
+            border: none; border-radius: 9px; font-size: 0.95rem; font-weight: 700;
+            cursor: pointer; transition: background .2s; margin-top: 6px;
+        }
+        .btn-submit:hover { background: #1d4ed8; }
+        .divider { text-align: center; color: #94a3b8; font-size: 0.85rem; margin: 18px 0; }
+        .login-link { text-align: center; font-size: 0.88rem; color: #64748b; }
+        .login-link a { color: #2563eb; font-weight: 700; }
+        .login-link a:hover { text-decoration: underline; }
+        .alert { background: #fef2f2; border: 1px solid #fecaca; border-radius: 8px; padding: 10px 14px; font-size: 0.85rem; color: #b91c1c; margin-bottom: 18px; }
+    </style>
+</head>
+<body>
+<nav class="navbar">
+    <a href="/" class="nav-logo" style="display:flex;align-items:center;">
+        <img src="/assets/logo2.png" alt="StayNest" style="height:44px;width:auto;border-radius:6px;background:#fff;padding:3px;">
+    </a>
+    <a href="/" class="nav-back">← Back to Home</a>
+</nav>
+
+<div class="page">
+    <div class="card">
+        <div class="card-title">Create Account</div>
+        <div class="card-sub">Join StayNest to book your perfect PG</div>
+
+        <div class="alert" th:if="${error}" th:text="${error}"></div>
+
+        <form th:action="@{/register}" method="post">
+            <div class="form-group">
+                <label for="name">Full Name</label>
+                <input type="text" id="name" name="name" placeholder="John Doe" required/>
+            </div>
+            <div class="form-group">
+                <label for="email">Email Address</label>
+                <input type="email" id="email" name="email" placeholder="test@gmail.com" required/>
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" placeholder="Create a password" required/>
+            </div>
+            <button type="submit" class="btn-submit">Register →</button>
+        </form>
+
+        <div class="divider">Already have an account?</div>
+        <div class="login-link">
+            <a href="/login">Login here</a>
+        </div>
+    </div>
+</div>
+</body>
+</html>

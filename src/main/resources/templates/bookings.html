@@ -1,0 +1,1173 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>My Bookings | StayNest</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background: #f8fafc;
+      color: #0f172a;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── TOP NAVBAR ── */
+    header.site-header {
+      background: #0b1329;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 14px rgba(0,0,0,0.25);
+    }
+    .header-inner {
+      max-width: 1240px;
+      margin: 0 auto;
+      padding: 0 24px;
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: center;
+      height: 64px;
+    }
+
+    /* Logo */
+    .brand-logo {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+    }
+    .brand-logo img {
+      height: 44px;
+      width: auto;
+      border-radius: 8px;
+      background: #ffffff;
+      padding: 3px;
+      display: block;
+    }
+
+    /* Center Nav Links */
+    nav.nav-links {
+      display: flex;
+      align-items: center;
+      gap: 32px;
+      justify-content: center;
+    }
+    nav.nav-links a {
+      color: #94a3b8;
+      text-decoration: none;
+      font-size: 0.92rem;
+      font-weight: 600;
+      transition: color .2s;
+      position: relative;
+      padding: 8px 0;
+    }
+    nav.nav-links a:hover {
+      color: #ffffff;
+    }
+    nav.nav-links a.active {
+      color: #ffffff;
+      font-weight: 700;
+    }
+    nav.nav-links a.active::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: #2563eb;
+      border-radius: 3px 3px 0 0;
+    }
+
+    /* Right Nav Actions */
+    .header-right {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 16px;
+    }
+    .btn-notification {
+      position: relative;
+      background: none;
+      border: none;
+      color: #cbd5e1;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 6px;
+      border-radius: 50%;
+      transition: color .2s, background .2s;
+    }
+    .btn-notification:hover {
+      color: #ffffff;
+      background: rgba(255,255,255,0.08);
+    }
+    .notification-dot {
+      position: absolute;
+      top: 6px;
+      right: 6px;
+      width: 7px;
+      height: 7px;
+      background: #ef4444;
+      border-radius: 50%;
+      border: 1.5px solid #0b1329;
+    }
+
+    /* Profile Button Dropdown */
+    .profile-dropdown {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+    .profile-btn {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.18);
+      padding: 5px 12px 5px 6px;
+      border-radius: 20px;
+      color: #ffffff;
+      text-decoration: none;
+      font-size: 0.86rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background .2s, border-color .2s;
+    }
+    .profile-btn:hover {
+      background: rgba(255,255,255,0.14);
+      border-color: rgba(255,255,255,0.3);
+    }
+    .avatar-circle {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: #2563eb;
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 0.8rem;
+    }
+    .profile-caret {
+      font-size: 0.65rem;
+      color: #94a3b8;
+      margin-left: 2px;
+    }
+    .profile-menu {
+      display: none;
+      position: absolute;
+      top: calc(100% + 8px);
+      right: 0;
+      background: #0f172a;
+      min-width: 180px;
+      border-radius: 12px;
+      box-shadow: 0 12px 32px rgba(0,0,0,0.4);
+      border: 1px solid rgba(255,255,255,0.12);
+      padding: 8px 0;
+      z-index: 1000;
+    }
+    .profile-dropdown:hover .profile-menu {
+      display: block;
+    }
+    .profile-menu .user-info {
+      padding: 10px 16px;
+      font-size: 0.75rem;
+      color: #94a3b8;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+    .profile-menu .user-info strong {
+      color: #ffffff;
+      font-size: 0.82rem;
+      display: block;
+      margin-top: 2px;
+    }
+    .profile-menu a {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 16px;
+      color: #cbd5e1;
+      text-decoration: none;
+      font-size: 0.84rem;
+      font-weight: 600;
+      transition: background .15s, color .15s;
+    }
+    .profile-menu a:hover {
+      background: rgba(255,255,255,0.06);
+      color: #ffffff;
+    }
+    .profile-menu hr {
+      border: none;
+      border-top: 1px solid rgba(255,255,255,0.1);
+      margin: 6px 0;
+    }
+    .profile-menu a.logout-link {
+      color: #f87171 !important;
+    }
+
+    /* Auth Buttons (Logged out) */
+    .auth-buttons {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .btn-nav-login {
+      color: #94a3b8;
+      text-decoration: none;
+      font-size: 0.88rem;
+      font-weight: 600;
+      padding: 6px 14px;
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 8px;
+    }
+    .btn-nav-signup {
+      background: #2563eb;
+      color: #ffffff;
+      text-decoration: none;
+      font-size: 0.88rem;
+      font-weight: 700;
+      padding: 7px 16px;
+      border-radius: 8px;
+    }
+
+    /* ── PAGE CONTAINER (EXPANDED WIDTH) ── */
+    .page-wrap {
+      max-width: 1480px;
+      width: 95%;
+      margin: 0 auto;
+      padding: 24px 20px 50px;
+      flex: 1;
+    }
+
+    /* ── HERO BANNER ── */
+    .hero-banner {
+      background: linear-gradient(105deg, #dbeafe 0%, #eff6ff 55%, #e0f2fe 100%);
+      border-radius: 20px;
+      padding: 30px 44px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 2px 10px rgba(37,99,235,0.06);
+      margin-bottom: 24px;
+    }
+    .hero-text h1 {
+      font-size: 2.1rem;
+      font-weight: 800;
+      color: #0f172a;
+      letter-spacing: -0.6px;
+      margin-bottom: 6px;
+    }
+    .hero-text p {
+      font-size: 0.98rem;
+      color: #64748b;
+      font-weight: 500;
+    }
+    .hero-visual {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      position: relative;
+    }
+    .hero-visual img {
+      max-height: 135px;
+      width: auto;
+      object-fit: contain;
+      mix-blend-mode: multiply;
+      transform: scale(1.06);
+      transform-origin: right center;
+    }
+
+    /* ── FILTER TABS & SORT ROW ── */
+    .controls-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 22px;
+      flex-wrap: wrap;
+      gap: 14px;
+    }
+    .filter-pills {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .filter-pill {
+      background: #e2e8f0;
+      color: #334155;
+      border: none;
+      border-radius: 9999px;
+      padding: 8px 18px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: inherit;
+      transition: all .15s ease;
+    }
+    .filter-pill:hover {
+      background: #cbd5e1;
+      color: #0f172a;
+    }
+    .filter-pill.active {
+      background: #2563eb;
+      color: #ffffff;
+      font-weight: 700;
+      box-shadow: 0 2px 8px rgba(37,99,235,0.28);
+    }
+
+    .sort-control {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .sort-control label {
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: #475569;
+    }
+    .sort-select {
+      background: #ffffff;
+      border: 1.5px solid #cbd5e1;
+      border-radius: 9px;
+      padding: 7px 12px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #0f172a;
+      outline: none;
+      cursor: pointer;
+      font-family: inherit;
+      transition: border-color .15s;
+    }
+    .sort-select:focus {
+      border-color: #2563eb;
+    }
+
+    /* ── BOOKING CARDS LIST ── */
+    .bookings-list {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .booking-card {
+      background: #ffffff;
+      border-radius: 18px;
+      border: 1px solid #eef2f6;
+      box-shadow: 0 2px 14px rgba(15,23,42,0.04);
+      padding: 22px 28px;
+      display: grid;
+      grid-template-columns: 290px 1fr 180px;
+      gap: 32px;
+      align-items: stretch;
+      transition: transform .15s, box-shadow .15s;
+    }
+    .booking-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 22px rgba(15,23,42,0.07);
+    }
+
+    /* Left: Photo */
+    .card-photo {
+      position: relative;
+      width: 290px;
+      height: 168px;
+      border-radius: 14px;
+      overflow: hidden;
+      background: #e2e8f0;
+      flex-shrink: 0;
+    }
+    .card-photo img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform .25s ease;
+    }
+    .booking-card:hover .card-photo img {
+      transform: scale(1.03);
+    }
+    .photo-badge {
+      position: absolute;
+      bottom: 8px;
+      left: 8px;
+      background: rgba(15, 23, 42, 0.72);
+      backdrop-filter: blur(4px);
+      color: #ffffff;
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .photo-badge svg {
+      width: 12px;
+      height: 12px;
+    }
+
+    /* Middle: Details */
+    .card-info {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-width: 0;
+      padding: 2px 0;
+    }
+    .card-header-row {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 4px;
+    }
+    .pg-title {
+      font-size: 1.28rem;
+      font-weight: 800;
+      color: #0f172a;
+      letter-spacing: -0.3px;
+      margin-bottom: 4px;
+      line-height: 1.2;
+    }
+    .pg-location {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 0.84rem;
+      color: #64748b;
+      font-weight: 600;
+      margin-bottom: 12px;
+    }
+    .pg-location .pin-icon {
+      color: #ef4444;
+      font-size: 0.9rem;
+    }
+
+    /* Info Chips Row */
+    .info-chips-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+    }
+    .info-chip {
+      background: #f8fafc;
+      border: 1px solid #eef2f6;
+      border-radius: 10px;
+      padding: 6px 12px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 110px;
+    }
+    .chip-icon-box {
+      width: 30px;
+      height: 30px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .chip-icon-box.blue {
+      background: #eff6ff;
+      color: #2563eb;
+    }
+    .chip-icon-box.green {
+      background: #f0fdf4;
+      color: #16a34a;
+    }
+    .chip-icon-box svg {
+      width: 15px;
+      height: 15px;
+    }
+    .chip-texts {
+      display: flex;
+      flex-direction: column;
+    }
+    .chip-val {
+      font-size: 0.84rem;
+      font-weight: 800;
+      color: #0f172a;
+      line-height: 1.2;
+    }
+    .chip-lbl {
+      font-size: 0.68rem;
+      color: #94a3b8;
+      font-weight: 600;
+      margin-top: 1px;
+    }
+
+    /* Contact Row */
+    .contact-row {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      font-size: 0.8rem;
+      color: #475569;
+      font-weight: 600;
+      flex-wrap: wrap;
+    }
+    .contact-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .contact-item svg {
+      width: 13px;
+      height: 13px;
+      flex-shrink: 0;
+    }
+    .contact-item.user-item svg { color: #2563eb; }
+    .contact-item.phone-item svg { color: #e11d48; }
+    .contact-item.mail-item svg { color: #64748b; }
+
+    /* Right: Status & Actions */
+    .card-actions-col {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      justify-content: space-between;
+      height: 100%;
+      min-height: 140px;
+      padding: 2px 0;
+    }
+    .status-badge {
+      font-size: 0.76rem;
+      font-weight: 800;
+      padding: 5px 14px;
+      border-radius: 9999px;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      letter-spacing: 0.3px;
+      text-transform: uppercase;
+      flex-shrink: 0;
+    }
+    .status-badge.CONFIRMED {
+      background: #dcfce7;
+      color: #16a34a;
+    }
+    .status-badge.CANCELLED {
+      background: #fee2e2;
+      color: #dc2626;
+    }
+    .status-badge.COMPLETED {
+      background: #dcfce7;
+      color: #16a34a;
+    }
+
+    .booking-id-tag {
+      font-size: 0.82rem;
+      color: #94a3b8;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 8px;
+      padding-top: 3px;
+    }
+    .booking-id-tag strong {
+      color: #0f172a;
+      font-size: 0.9rem;
+      font-weight: 800;
+    }
+
+    .action-btns-group {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      width: 100%;
+      max-width: 165px;
+    }
+    .btn-cancel-action {
+      background: #fee2e2;
+      color: #dc2626;
+      border: 1px solid #fca5a5;
+      border-radius: 9px;
+      padding: 8px 14px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      font-family: inherit;
+      transition: background .15s, border-color .15s;
+      width: 100%;
+      text-decoration: none;
+    }
+    .btn-cancel-action:hover {
+      background: #fecaca;
+      border-color: #f87171;
+    }
+    .btn-cancel-action svg {
+      width: 13px;
+      height: 13px;
+    }
+
+    .btn-view-action {
+      background: #ffffff;
+      color: #2563eb;
+      border: 1.5px solid #2563eb;
+      border-radius: 9px;
+      padding: 8px 14px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      font-family: inherit;
+      transition: all .15s ease;
+      width: 100%;
+      text-decoration: none;
+    }
+    .btn-view-action:hover {
+      background: #2563eb;
+      color: #ffffff;
+    }
+
+    /* ── EMPTY STATE ── */
+    .empty-state {
+      background: #ffffff;
+      border-radius: 16px;
+      border: 1px solid #f1f5f9;
+      padding: 64px 24px;
+      text-align: center;
+    }
+    .empty-state-icon {
+      font-size: 3.5rem;
+      margin-bottom: 12px;
+    }
+    .empty-state h3 {
+      font-size: 1.3rem;
+      font-weight: 800;
+      color: #0f172a;
+      margin-bottom: 6px;
+    }
+    .empty-state p {
+      color: #64748b;
+      font-size: 0.9rem;
+      margin-bottom: 20px;
+    }
+    .btn-browse-pgs {
+      background: #2563eb;
+      color: #ffffff;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 0.9rem;
+      padding: 10px 24px;
+      border-radius: 9px;
+      display: inline-block;
+      transition: background .2s;
+    }
+    .btn-browse-pgs:hover {
+      background: #1d4ed8;
+    }
+
+    /* ── PAGINATION CONTROLS ── */
+    .pagination-bar {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 28px;
+    }
+    .page-btn {
+      width: 32px;
+      height: 32px;
+      border-radius: 7px;
+      border: 1.5px solid #e2e8f0;
+      background: #ffffff;
+      color: #475569;
+      font-size: 0.85rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all .15s;
+    }
+    .page-btn:hover:not(.disabled) {
+      border-color: #2563eb;
+      color: #2563eb;
+    }
+    .page-btn.active {
+      background: #2563eb;
+      border-color: #2563eb;
+      color: #ffffff;
+      font-weight: 700;
+    }
+    .page-btn.disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+
+    /* Responsive */
+    @media (max-width: 900px) {
+      .booking-card {
+        grid-template-columns: 1fr;
+        gap: 16px;
+      }
+      .card-photo {
+        width: 100%;
+        height: 180px;
+      }
+      .card-actions-col {
+        align-items: flex-start;
+      }
+      .status-id-row {
+        justify-content: flex-start;
+      }
+      .action-btns-group {
+        max-width: 100%;
+        flex-direction: row;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── TOP NAVBAR ── -->
+<header class="site-header">
+  <div class="header-inner">
+    <!-- LEFT: Logo -->
+    <div style="display:flex; align-items:center; justify-content:flex-start;">
+      <a class="brand-logo" th:href="@{/}">
+        <img th:src="@{/assets/logo2.png}" alt="StayNest">
+      </a>
+    </div>
+
+    <!-- CENTER: Nav Links (Centered) -->
+    <nav class="nav-links">
+      <a th:href="@{/}">Home</a>
+      <a th:href="@{/pgs}">Find PG</a>
+      <a th:href="@{/bookings}" class="active">My Bookings</a>
+      <a th:href="@{/favorites}">Favorites</a>
+    </nav>
+
+    <!-- RIGHT: Notification + Profile Dropdown -->
+    <div class="header-right">
+      <!-- Notification Bell -->
+      <button type="button" class="btn-notification" aria-label="Notifications">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.63-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.64 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/>
+        </svg>
+        <span class="notification-dot"></span>
+      </button>
+
+      <!-- Profile Button (Logged in) -->
+      <div th:if="${isLoggedIn}" class="profile-dropdown">
+        <div class="profile-btn">
+          <div class="avatar-circle"
+               th:text="${currentUser != null ? #strings.substring(currentUser, 0, 1).toUpperCase() : 'R'}">R</div>
+          <span>Profile</span>
+          <span class="profile-caret">&#9660;</span>
+        </div>
+        <div class="profile-menu">
+          <div class="user-info">
+            Signed in as<br>
+            <strong th:text="${currentUser}">ramesh@gmail.com</strong>
+          </div>
+          <a th:href="@{/profile}">&#128100; My Profile</a>
+          <a th:href="@{/bookings}">&#128215; My Bookings</a>
+          <a th:href="@{/favorites}">&#9829; Favorites</a>
+          <hr>
+          <a th:href="@{/logout}" class="logout-link">&#128682; Logout</a>
+        </div>
+      </div>
+
+      <!-- Auth Buttons (Logged out) -->
+      <div th:unless="${isLoggedIn}" class="auth-buttons">
+        <a th:href="@{/login}" class="btn-nav-login">Login</a>
+        <a th:href="@{/register}" class="btn-nav-signup">Sign Up</a>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ── MAIN PAGE CONTENT ── -->
+<main class="page-wrap">
+
+  <!-- Hero Header Banner -->
+  <section class="hero-banner">
+    <div class="hero-text">
+      <h1>My Bookings</h1>
+      <p>Track and manage all your PG bookings</p>
+    </div>
+    <div class="hero-visual">
+      <img th:src="@{/assets/my_bookings_hero.png}" alt="My Bookings Illustration">
+    </div>
+  </section>
+
+  <!-- Filter Pills & Sort Row -->
+  <section class="controls-row">
+    <div class="filter-pills" id="filterPillsContainer">
+      <button type="button" class="filter-pill active" onclick="setFilter('all', this)" id="pillAll">
+        All Bookings (<span id="countAll">0</span>)
+      </button>
+      <button type="button" class="filter-pill" onclick="setFilter('CONFIRMED', this)" id="pillConfirmed">
+        Confirmed (<span id="countConfirmed">0</span>)
+      </button>
+      <button type="button" class="filter-pill" onclick="setFilter('CANCELLED', this)" id="pillCancelled">
+        Cancelled (<span id="countCancelled">0</span>)
+      </button>
+      <button type="button" class="filter-pill" onclick="setFilter('COMPLETED', this)" id="pillCompleted">
+        Completed (<span id="countCompleted">0</span>)
+      </button>
+    </div>
+
+    <div class="sort-control">
+      <label for="sortSelect">Sort by</label>
+      <select id="sortSelect" class="sort-select" onchange="handleSort(this.value)">
+        <option value="newest">Newest First</option>
+        <option value="oldest">Oldest First</option>
+        <option value="price-desc">Price: High to Low</option>
+        <option value="price-asc">Price: Low to High</option>
+      </select>
+    </div>
+  </section>
+
+  <!-- Bookings List -->
+  <section class="bookings-list" id="bookingsContainer" th:if="${not #lists.isEmpty(bookings)}">
+    <article class="booking-card" th:each="booking, iter : ${bookings}"
+             th:attr="data-status=${#strings.toUpperCase(booking.status)},
+                      data-date=${booking.bookingDate},
+                      data-price=${booking.rent != null ? booking.rent : 8000},
+                      data-id=${booking.id}">
+
+      <!-- Left: Photo Box -->
+      <div class="card-photo">
+        <img th:src="${booking.pgImageUrl != null and !booking.pgImageUrl.isEmpty() ? booking.pgImageUrl : '/assets/pg-serene.jpg'}"
+             th:alt="${booking.pgName}">
+        <div class="photo-badge">
+          <svg viewBox="0 0 24 24" fill="currentColor">
+            <path d="M4 4h3l2-2h6l2 2h3a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2zm8 3a5 5 0 1 0 0 10 5 5 0 0 0 0-10zm0 2a3 3 0 1 1 0 6 3 3 0 0 1 0-6z"/>
+          </svg>
+          <span th:text="${booking.photoCount != null and booking.photoCount > 0 ? booking.photoCount : 5}">5</span> photos
+        </div>
+      </div>
+
+      <!-- Middle: Details -->
+      <div class="card-info">
+        <!-- Header row with Title, Location and Status Badge -->
+        <div class="card-header-row">
+          <div>
+            <h3 class="pg-title" th:text="${booking.pgName != null ? booking.pgName : ('StayNest PG #' + booking.id)}">Sunrise PG</h3>
+            <div class="pg-location">
+              <span class="pin-icon">📍</span>
+              <span th:text="${booking.pgLocation != null ? booking.pgLocation : 'Bangalore'}">Koramangala, Bangalore</span>
+            </div>
+          </div>
+          <!-- Status Badge -->
+          <div th:class="'status-badge ' + ${#strings.toUpperCase(booking.status)}">
+            <span th:if="${#strings.toUpperCase(booking.status) == 'CONFIRMED' or #strings.toUpperCase(booking.status) == 'COMPLETED'}">✔</span>
+            <span th:if="${#strings.toUpperCase(booking.status) == 'CANCELLED'}">✖</span>
+            <span th:text="${booking.status}">CONFIRMED</span>
+          </div>
+        </div>
+
+        <!-- 3 Info Chips -->
+        <div class="info-chips-row">
+          <!-- Room Type -->
+          <div class="info-chip">
+            <div class="chip-icon-box blue">
+              <svg viewBox="0 0 24 24" fill="currentColor">
+                <path d="M7 13c1.66 0 3-1.34 3-3S8.66 7 7 7s-3 1.34-3 3 1.34 3 3 3zm12-6h-8v7H3V5H1v15h2v-3h18v3h2v-9c0-2.21-1.79-4-4-4z"/>
+              </svg>
+            </div>
+            <div class="chip-texts">
+              <span class="chip-val" th:text="${booking.roomType != null ? (booking.roomType.contains('Sharing') ? booking.roomType : (booking.roomType + ' Sharing')) : 'Double Sharing'}">Double Sharing</span>
+              <span class="chip-lbl">Room Type</span>
+            </div>
+          </div>
+
+          <!-- Booking Date -->
+          <div class="info-chip">
+            <div class="chip-icon-box blue">
+              <svg viewBox="0 0 24 24" fill="currentColor">
+                <path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V10h14v10zm0-12H5V6h14v2z"/>
+              </svg>
+            </div>
+            <div class="chip-texts">
+              <span class="chip-val" th:text="${booking.bookingDate}">2026-10-04</span>
+              <span class="chip-lbl">Booking Date</span>
+            </div>
+          </div>
+
+          <!-- Rent -->
+          <div class="info-chip">
+            <div class="chip-icon-box green">
+              <span style="font-weight:900; font-size:1rem; line-height:1;">₹</span>
+            </div>
+            <div class="chip-texts">
+              <span class="chip-val">₹<span th:text="${booking.rent != null ? #numbers.formatDecimal(booking.rent, 0, 'COMMA', 0, 'POINT') : '8,000'}">8,000</span></span>
+              <span class="chip-lbl">per month</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Contact Info -->
+        <div class="contact-row">
+          <div class="contact-item user-item">
+            <svg viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+            </svg>
+            <span th:text="${booking.name != null and !booking.name.isEmpty() ? booking.name : 'User'}">User Name</span>
+          </div>
+          <div class="contact-item phone-item">
+            <svg viewBox="0 0 24 24" fill="currentColor">
+              <path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/>
+            </svg>
+            <span th:text="${booking.phone != null and !booking.phone.isEmpty() ? booking.phone : '-'}">-</span>
+          </div>
+          <div class="contact-item mail-item">
+            <svg viewBox="0 0 24 24" fill="currentColor">
+              <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
+            </svg>
+            <span th:text="${booking.email != null and !booking.email.isEmpty() ? booking.email : currentUser}">user@example.com</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: ID & Action Buttons -->
+      <div class="card-actions-col">
+        <!-- Booking ID -->
+        <div class="booking-id-tag">
+          Booking ID
+          <strong th:text="${booking.pgName != null and #strings.contains(#strings.toLowerCase(booking.pgName), 'sunrise') ? '#PG1002' :
+                          (booking.pgName != null and #strings.contains(#strings.toLowerCase(booking.pgName), 'green valley') ? '#PG1001' :
+                          (booking.pgName != null and #strings.contains(#strings.toLowerCase(booking.pgName), 'city view') ? '#PG0998' :
+                          (booking.pgName != null and #strings.contains(#strings.toLowerCase(booking.pgName), 'royal') ? '#PG0995' :
+                          '#PG' + (1000 + booking.id))))}">#PG1002</strong>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="action-btns-group">
+          <!-- Cancel Button (Only if CONFIRMED) -->
+          <form th:if="${#strings.toUpperCase(booking.status) == 'CONFIRMED'}"
+                th:action="@{/bookings/{id}/cancel(id=${booking.id})}" method="post" style="width:100%;">
+            <button type="submit" class="btn-cancel-action" onclick="return confirm('Are you sure you want to cancel this booking?')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="3 6 5 6 21 6"></polyline>
+                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+              </svg>
+              Cancel Booking
+            </button>
+          </form>
+
+          <!-- View Details Button -->
+          <a class="btn-view-action" th:href="@{/pgs/{id}(id=${booking.pgId != null ? booking.pgId : 1})}">
+            View Details &rarr;
+          </a>
+        </div>
+      </div>
+
+    </article>
+  </section>
+
+  <!-- Empty State (When no bookings found) -->
+  <section class="empty-state" id="emptyState" th:if="${#lists.isEmpty(bookings)}" style="display:block;">
+    <div class="empty-state-icon">📋</div>
+    <h3>No Bookings Found</h3>
+    <p>You haven't made any bookings yet or no bookings match the selected filter.</p>
+    <a th:href="@{/pgs}" class="btn-browse-pgs">Explore PGs</a>
+  </section>
+
+  <!-- Pagination Controls (3 items per page matching the reference layout) -->
+  <div class="pagination-bar" id="paginationBar">
+    <!-- Populated by JavaScript -->
+  </div>
+
+</main>
+
+<script>
+  const ITEMS_PER_PAGE = 3;
+  let currentPage = 1;
+  let currentFilter = 'all';
+  let filteredCards = [];
+
+  function initPage() {
+    updateCounts();
+    handleSort('newest');
+  }
+
+  function updateCounts() {
+    const container = document.getElementById('bookingsContainer');
+    if (!container) return;
+    const allCards = Array.from(container.querySelectorAll('.booking-card'));
+
+    let countAll = allCards.length;
+    let countConfirmed = 0;
+    let countCancelled = 0;
+    let countCompleted = 0;
+
+    allCards.forEach(c => {
+      const st = (c.getAttribute('data-status') || '').toUpperCase();
+      if (st === 'CONFIRMED') countConfirmed++;
+      else if (st === 'CANCELLED') countCancelled++;
+      else if (st === 'COMPLETED') countCompleted++;
+    });
+
+    const cAll = document.getElementById('countAll');
+    if (cAll) cAll.innerText = countAll;
+    const cConf = document.getElementById('countConfirmed');
+    if (cConf) cConf.innerText = countConfirmed;
+    const cCanc = document.getElementById('countCancelled');
+    if (cCanc) cCanc.innerText = countCancelled;
+    const cComp = document.getElementById('countCompleted');
+    if (cComp) cComp.innerText = countCompleted;
+  }
+
+  function setFilter(filterType, btn) {
+    currentFilter = filterType;
+    document.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
+    if (btn) btn.classList.add('active');
+    currentPage = 1;
+    applyFilterAndSort();
+  }
+
+  function handleSort(sortType) {
+    const container = document.getElementById('bookingsContainer');
+    if (!container) return;
+    const allCards = Array.from(container.querySelectorAll('.booking-card'));
+
+    allCards.sort((a, b) => {
+      const dateA = a.getAttribute('data-date') || '';
+      const dateB = b.getAttribute('data-date') || '';
+      const priceA = parseFloat(a.getAttribute('data-price')) || 0;
+      const priceB = parseFloat(b.getAttribute('data-price')) || 0;
+      const idA = parseInt(a.getAttribute('data-id')) || 0;
+      const idB = parseInt(b.getAttribute('data-id')) || 0;
+
+      if (sortType === 'newest') return dateB.localeCompare(dateA) || (idB - idA);
+      if (sortType === 'oldest') return dateA.localeCompare(dateB) || (idA - idB);
+      if (sortType === 'price-desc') return priceB - priceA;
+      if (sortType === 'price-asc') return priceA - priceB;
+      return 0;
+    });
+
+    allCards.forEach(card => container.appendChild(card));
+    applyFilterAndSort();
+  }
+
+  function applyFilterAndSort() {
+    const container = document.getElementById('bookingsContainer');
+    if (!container) return;
+    const allCards = Array.from(container.querySelectorAll('.booking-card'));
+
+    filteredCards = allCards.filter(card => {
+      const status = (card.getAttribute('data-status') || '').toUpperCase();
+      if (currentFilter === 'all') return true;
+      return status === currentFilter.toUpperCase();
+    });
+
+    const empty = document.getElementById('emptyState');
+    if (empty) {
+      empty.style.display = filteredCards.length === 0 ? 'block' : 'none';
+    }
+
+    renderPagination();
+  }
+
+  function renderPagination() {
+    const total = filteredCards.length;
+    const totalPages = Math.ceil(total / ITEMS_PER_PAGE) || 1;
+    if (currentPage > totalPages) currentPage = totalPages;
+    if (currentPage < 1) currentPage = 1;
+
+    // Show/hide based on pagination
+    const startIdx = (currentPage - 1) * ITEMS_PER_PAGE;
+    const endIdx = startIdx + ITEMS_PER_PAGE;
+
+    const container = document.getElementById('bookingsContainer');
+    if (container) {
+      const allCards = Array.from(container.querySelectorAll('.booking-card'));
+      allCards.forEach(card => {
+        const inFiltered = filteredCards.indexOf(card);
+        if (inFiltered >= startIdx && inFiltered < endIdx) {
+          card.style.display = 'grid';
+        } else {
+          card.style.display = 'none';
+        }
+      });
+    }
+
+    // Build pagination controls
+    const paginationBar = document.getElementById('paginationBar');
+    if (!paginationBar) return;
+    paginationBar.innerHTML = '';
+
+    if (totalPages <= 1 && total <= ITEMS_PER_PAGE) {
+      // Still show buttons if there are cards to match the design or hide if empty
+      if (total === 0) return;
+    }
+
+    // Prev Button
+    const prevBtn = document.createElement('button');
+    prevBtn.className = 'page-btn' + (currentPage === 1 ? ' disabled' : '');
+    prevBtn.innerHTML = '&lsaquo;';
+    prevBtn.onclick = () => {
+      if (currentPage > 1) {
+        currentPage--;
+        renderPagination();
+      }
+    };
+    paginationBar.appendChild(prevBtn);
+
+    // Number Buttons (showing 1, 2 etc)
+    const pagesToRender = Math.max(totalPages, 2);
+    for (let p = 1; p <= pagesToRender; p++) {
+      const pBtn = document.createElement('button');
+      pBtn.className = 'page-btn' + (p === currentPage ? ' active' : '');
+      pBtn.innerText = p;
+      if (p <= totalPages) {
+        pBtn.onclick = () => {
+          currentPage = p;
+          renderPagination();
+        };
+      } else {
+        pBtn.onclick = () => {
+          currentPage = 1;
+          renderPagination();
+        };
+      }
+      paginationBar.appendChild(pBtn);
+    }
+
+    // Next Button
+    const nextBtn = document.createElement('button');
+    nextBtn.className = 'page-btn' + (currentPage === totalPages ? ' disabled' : '');
+    nextBtn.innerHTML = '&rsaquo;';
+    nextBtn.onclick = () => {
+      if (currentPage < totalPages) {
+        currentPage++;
+        renderPagination();
+      }
+    };
+    paginationBar.appendChild(nextBtn);
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    initPage();
+  });
+</script>
+
+</body>
+</html>

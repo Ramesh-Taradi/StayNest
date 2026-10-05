@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Error | StayNest</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'Manrope',sans-serif;background:#f0f6ff;min-height:100vh;display:flex;flex-direction:column;}
+    header{background:#0f172a;padding:0;}
+    .nav-wrap{max-width:1200px;margin:0 auto;padding:0 28px;display:flex;align-items:center;justify-content:space-between;height:64px;}
+    .logo{color:white;font-size:1.45rem;font-weight:800;text-decoration:none;}
+    .logo span{color:#60a5fa;}
+    nav a{color:#94a3b8;text-decoration:none;font-weight:600;font-size:0.9rem;margin-left:20px;}
+    nav a:hover{color:white;}
+    .btn-login{color:#94a3b8!important;border:1.5px solid rgba(255,255,255,0.2);padding:7px 16px;border-radius:8px;}
+    .btn-signup{background:#2563eb;color:white!important;padding:8px 18px;border-radius:8px;}
+    .content{flex:1;display:flex;align-items:center;justify-content:center;padding:40px 20px;text-align:center;}
+    .card{background:white;border-radius:20px;padding:60px 40px;max-width:480px;box-shadow:0 8px 40px rgba(0,0,0,.08);}
+    .icon{font-size:4rem;margin-bottom:20px;}
+    h1{color:#0f172a;font-size:1.8rem;margin-bottom:10px;}
+    p{color:#64748b;margin-bottom:28px;line-height:1.6;}
+    .status{display:inline-block;background:#fee2e2;color:#dc2626;padding:4px 14px;border-radius:20px;font-size:0.85rem;font-weight:700;margin-bottom:20px;}
+    .btn{display:inline-block;padding:12px 28px;background:#2563eb;color:white;border-radius:10px;text-decoration:none;font-weight:700;margin:6px;}
+    .btn-out{background:white;color:#2563eb;border:2px solid #2563eb;}
+  </style>
+</head>
+<body>
+<header>
+  <div class="nav-wrap">
+    <a th:href="@{/}" class="logo" style="display:flex;align-items:center;">
+      <img th:src="@{/assets/logo2.png}" alt="StayNest" style="height:44px;width:auto;border-radius:6px;background:#fff;padding:3px;">
+    </a>
+    <nav>
+      <a th:href="@{/}">Home</a>
+      <a th:href="@{/pgs}">Find PG</a>
+      <a th:href="@{/bookings}">My Bookings</a>
+      <a th:href="@{/favorites}">Favorites</a>
+      <a th:href="@{/login}" class="btn-login">Login</a>
+      <a th:href="@{/register}" class="btn-signup">Sign Up</a>
+    </nav>
+  </div>
+</header>
+
+<div class="content">
+  <div class="card">
+    <div class="icon">⚠️</div>
+    <div class="status" th:text="${status != null ? status : '500'}">500</div>
+    <h1>Something went wrong</h1>
+    <p th:text="${message != null ? message : 'An unexpected error occurred. Please try again.'}">Error message</p>
+    <a th:href="@{/}" class="btn">Go Home</a>
+    <a th:href="@{/pgs}" class="btn btn-out">Browse PGs</a>
+  </div>
+</div>
+</body>
+</html>

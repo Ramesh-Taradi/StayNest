@@ -27,19 +27,16 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private UserService userService;
 
 
-    // Skip JWT authentication for public endpoints
+    // Only skip JWT check for static assets and favicon
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
         String path = request.getServletPath();
 
-        return path.equals("/register")
-                || path.equals("/login")
-                || path.equals("/auth/register")
-                || path.equals("/auth/login")
-                || path.startsWith("/WEB-INF/views/")
-                || path.startsWith("/css/")
+        return path.startsWith("/css/")
                 || path.startsWith("/images/")
+                || path.startsWith("/assets/")
                 || path.startsWith("/js/")
+                || path.startsWith("/WEB-INF/")
                 || path.equals("/favicon.ico");
     }
 

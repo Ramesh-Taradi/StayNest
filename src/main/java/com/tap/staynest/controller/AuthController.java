@@ -29,9 +29,17 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public String register(@Valid @ModelAttribute RegisterRequestDTO requestDTO, Model model) {
-        authService.register(requestDTO);
-        return "redirect:/login";
+    public String register(@Valid @ModelAttribute RegisterRequestDTO requestDTO, org.springframework.validation.BindingResult bindingResult, Model model) {
+        if (bindingResult.hasErrors()) {
+            return "register";
+        }
+        try {
+            authService.register(requestDTO);
+            return "redirect:/login";
+        } catch (RuntimeException e) {
+            model.addAttribute("error", e.getMessage());
+            return "register";
+        }
     }
 
     @GetMapping("/login")
@@ -42,8 +50,13 @@ public class AuthController {
     @PostMapping("/login")
     public String login(
             @Valid @ModelAttribute LoginRequestDTO requestDTO,
+            org.springframework.validation.BindingResult bindingResult,
             HttpServletResponse response,
             Model model) {
+
+        if (bindingResult.hasErrors()) {
+            return "login";
+        }
 
         try {
             String token = authService.login(requestDTO);
@@ -63,5 +76,20 @@ public class AuthController {
             model.addAttribute("error", "Invalid email or password");
             return "login";
         }
+    }
+
+    @GetMapping("/logout")
+    public String logout(HttpServletResponse response) {
+        ResponseCookie cookie = ResponseCookie.from("jwt", "")
+                .httpOnly(true)
+                .secure(false)
+                .path("/")
+                .maxAge(0)
+                .sameSite("Lax")
+                .build();
+
+        response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
+        org.springframework.security.core.context.SecurityContextHolder.clearContext();
+        return "redirect:/";
     }
 }

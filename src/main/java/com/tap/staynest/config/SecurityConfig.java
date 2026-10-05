@@ -35,7 +35,7 @@ public class SecurityConfig {
 
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
-        return web -> web.ignoring().requestMatchers("/WEB-INF/views/**");
+        return web -> web.ignoring().requestMatchers("/css/**", "/js/**", "/images/**", "/assets/**", "/favicon.ico");
     }
 
     @Bean
@@ -54,18 +54,32 @@ public class SecurityConfig {
     @Bean
     public AuthenticationEntryPoint authenticationEntryPoint() {
         return (request, response, authException) -> {
-            response.setStatus(401);
-            response.setContentType("application/json");
-            response.getWriter().write("{\"error\":\"Unauthorized - Please login\"}");
+            String acceptHeader = request.getHeader("Accept");
+            // For REST API calls return JSON 401
+            if (acceptHeader != null && acceptHeader.contains("application/json")) {
+                response.setStatus(401);
+                response.setContentType("application/json");
+                response.getWriter().write("{\"error\":\"Unauthorized - Please login\"}");
+            } else {
+                // For browser requests redirect to login page
+                response.sendRedirect("/login");
+            }
         };
     }
 
     @Bean
     public AccessDeniedHandler accessDeniedHandler() {
         return (request, response, accessDeniedException) -> {
-            response.setStatus(403);
-            response.setContentType("application/json");
-            response.getWriter().write("{\"error\":\"Access denied - Insufficient permissions\"}");
+            String acceptHeader = request.getHeader("Accept");
+            // For REST API calls return JSON 403
+            if (acceptHeader != null && acceptHeader.contains("application/json")) {
+                response.setStatus(403);
+                response.setContentType("application/json");
+                response.getWriter().write("{\"error\":\"Access denied - Insufficient permissions\"}");
+            } else {
+                // For browser requests redirect to error page
+                response.sendRedirect("/error");
+            }
         };
     }
 
@@ -79,21 +93,37 @@ public class SecurityConfig {
                         .accessDeniedHandler(accessDeniedHandler())
                 )
                 .authenticationProvider(authenticationProvider())
+                .logout(logout -> logout
+                        .logoutUrl("/logout")
+                        .logoutSuccessUrl("/")
+                        .deleteCookies("jwt")
+                        .invalidateHttpSession(true)
+                        .clearAuthentication(true)
+                        .permitAll()
+                )
                 .authorizeHttpRequests(auth -> auth
-                        // Public endpoints
-                        .requestMatchers("/").permitAll()
-                        .requestMatchers("/login", "/register").permitAll()
-                        .requestMatchers("/auth/login", "/auth/register").permitAll()
-                        .requestMatchers("/css/**", "/images/**", "/js/**", "/favicon.ico").permitAll()
+                        // Static resources
+                        .requestMatchers("/css/**", "/js/**", "/images/**", "/assets/**", "/favicon.ico").permitAll()
 
-                        // Admin endpoints
+                        // Public UI pages (no login required)
+                        .requestMatchers("/", "/search", "/error").permitAll()
+                        .requestMatchers("/pgs/**").permitAll()
+                        .requestMatchers("/login", "/register", "/logout").permitAll()
+                        .requestMatchers("/auth/**", "/api/auth/**").permitAll()
+
+                        // User pages & Bookings require authentication
+                        .requestMatchers("/profile", "/profile/**", "/favorites").authenticated()
+                        .requestMatchers("/bookings", "/bookings/**").authenticated()
+                        .requestMatchers("/pgs/*/reviews/**").authenticated()
+
+                        // Admin API endpoints
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
 
-                        // User & Admin endpoints
+                        // Protected REST API endpoints
                         .requestMatchers("/api/pgs/**", "/api/rooms/**", "/api/bookings/**", "/api/reviews/**")
                         .hasAnyRole("USER", "ADMIN")
 
-                        // All other endpoints
+                        // All other requests require authentication
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);

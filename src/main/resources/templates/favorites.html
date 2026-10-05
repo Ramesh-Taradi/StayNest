@@ -1,0 +1,743 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Favorites | StayNest</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    
+    body {
+      font-family: 'Plus Jakarta Sans', 'Manrope', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: #f8fafc;
+      background-image: 
+        radial-gradient(ellipse 90% 45% at 50% -10%, rgba(224, 242, 254, 0.75), transparent 75%),
+        radial-gradient(circle at 12% 18%, rgba(238, 242, 255, 0.9) 0%, transparent 45%),
+        radial-gradient(circle at 88% 12%, rgba(224, 242, 254, 0.8) 0%, transparent 45%);
+      color: #0f172a;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── TOP NAVBAR ── */
+    header.site-header {
+      background: #0b1329;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 14px rgba(0,0,0,0.25);
+    }
+    .header-inner {
+      max-width: 1400px;
+      width: 95%;
+      margin: 0 auto;
+      padding: 0 20px;
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: center;
+      height: 64px;
+    }
+
+    /* Logo */
+    .brand-logo {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+    }
+    .brand-logo img {
+      height: 42px;
+      width: auto;
+      border-radius: 6px;
+      background: #ffffff;
+      padding: 3px;
+      display: block;
+    }
+
+    /* Center Nav Links */
+    nav.nav-links {
+      display: flex;
+      align-items: center;
+      gap: 32px;
+      justify-content: center;
+    }
+    nav.nav-links a {
+      color: #94a3b8;
+      text-decoration: none;
+      font-size: 0.92rem;
+      font-weight: 600;
+      transition: color .2s;
+      position: relative;
+      padding: 20px 0;
+      display: inline-flex;
+      align-items: center;
+    }
+    nav.nav-links a:hover {
+      color: #ffffff;
+    }
+    nav.nav-links a.active {
+      color: #ffffff;
+      font-weight: 700;
+    }
+    nav.nav-links a.active::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: #2563eb;
+      border-radius: 3px 3px 0 0;
+    }
+
+    /* Right Nav Actions */
+    .header-right {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 16px;
+    }
+    .btn-notification {
+      position: relative;
+      background: none;
+      border: none;
+      color: #cbd5e1;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 7px;
+      border-radius: 50%;
+      transition: color .2s, background .2s;
+    }
+    .btn-notification:hover {
+      color: #ffffff;
+      background: rgba(255,255,255,0.08);
+    }
+    .notification-dot {
+      position: absolute;
+      top: 6px;
+      right: 6px;
+      width: 8px;
+      height: 8px;
+      background: #ef4444;
+      border-radius: 50%;
+      border: 1.5px solid #0b1329;
+    }
+
+    /* Profile Button Dropdown */
+    .profile-dropdown {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+    .profile-btn {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.18);
+      padding: 5px 12px 5px 6px;
+      border-radius: 20px;
+      color: #ffffff;
+      text-decoration: none;
+      font-size: 0.86rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background .2s, border-color .2s;
+    }
+    .profile-btn:hover {
+      background: rgba(255,255,255,0.14);
+      border-color: rgba(255,255,255,0.3);
+    }
+    .avatar-circle {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: #2563eb;
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 0.8rem;
+    }
+    .profile-caret {
+      font-size: 0.65rem;
+      color: #94a3b8;
+      margin-left: 2px;
+    }
+    .profile-menu {
+      display: none;
+      position: absolute;
+      top: calc(100% + 8px);
+      right: 0;
+      background: #0f172a;
+      min-width: 180px;
+      border-radius: 12px;
+      box-shadow: 0 12px 32px rgba(0,0,0,0.4);
+      border: 1px solid rgba(255,255,255,0.12);
+      padding: 8px 0;
+      z-index: 1000;
+    }
+    .profile-dropdown:hover .profile-menu {
+      display: block;
+    }
+    .profile-menu .user-info {
+      padding: 10px 16px;
+      font-size: 0.75rem;
+      color: #94a3b8;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+    .profile-menu .user-info strong {
+      color: #ffffff;
+      font-size: 0.82rem;
+      display: block;
+      margin-top: 2px;
+    }
+    .profile-menu a {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 16px;
+      color: #cbd5e1;
+      text-decoration: none;
+      font-size: 0.84rem;
+      font-weight: 600;
+      transition: background .15s, color .15s;
+    }
+    .profile-menu a:hover {
+      background: rgba(255,255,255,0.06);
+      color: #ffffff;
+    }
+    .profile-menu hr {
+      border: none;
+      border-top: 1px solid rgba(255,255,255,0.1);
+      margin: 6px 0;
+    }
+    .profile-menu a.logout-link {
+      color: #f87171 !important;
+    }
+
+    /* Auth Buttons (Logged out) */
+    .auth-buttons {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .btn-nav-login {
+      color: #94a3b8;
+      text-decoration: none;
+      font-size: 0.88rem;
+      font-weight: 600;
+      padding: 6px 14px;
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 8px;
+    }
+    .btn-nav-signup {
+      background: #2563eb;
+      color: #ffffff;
+      text-decoration: none;
+      font-size: 0.88rem;
+      font-weight: 700;
+      padding: 7px 16px;
+      border-radius: 8px;
+    }
+
+    /* ── PAGE CONTAINER (MATCHING PREVIOUS PAGES WIDTH: 1400px) ── */
+    .page-wrap {
+      max-width: 1400px;
+      width: 95%;
+      margin: 0 auto;
+      padding: 24px 20px 20px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    /* ── HEADER TITLE SECTION ── */
+    .fav-header {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      margin-bottom: 8px;
+    }
+    .fav-header-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding-top: 3px;
+    }
+    .fav-header-text h1 {
+      font-size: 2.1rem;
+      font-weight: 800;
+      color: #0f172a;
+      letter-spacing: -0.6px;
+      line-height: 1.15;
+    }
+    .fav-header-text p {
+      font-size: 0.98rem;
+      color: #64748b;
+      margin-top: 3px;
+      font-weight: 500;
+    }
+
+    /* ── CENTER EMPTY STATE SECTION ── */
+    .empty-center-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      margin: 10px auto 30px;
+      max-width: 620px;
+      width: 100%;
+    }
+
+    /* Illustration Graphic */
+    .illustration-wrapper {
+      width: 100%;
+      max-width: 420px;
+      display: flex;
+      justify-content: center;
+      margin-bottom: 14px;
+      position: relative;
+    }
+    .illustration-wrapper svg {
+      width: 100%;
+      height: auto;
+      max-height: 220px;
+      filter: drop-shadow(0 8px 20px rgba(37, 99, 235, 0.07));
+    }
+
+    /* Text & Action */
+    .empty-title {
+      font-size: 1.95rem;
+      font-weight: 800;
+      color: #0f172a;
+      letter-spacing: -0.5px;
+      margin-bottom: 8px;
+    }
+    .empty-subtitle {
+      font-size: 1.05rem;
+      color: #64748b;
+      line-height: 1.5;
+      margin-bottom: 22px;
+      max-width: 520px;
+      font-weight: 500;
+    }
+
+    /* Browse Button */
+    .btn-browse {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: #2563eb;
+      color: #ffffff;
+      text-decoration: none;
+      padding: 12px 30px;
+      border-radius: 12px;
+      font-size: 1.02rem;
+      font-weight: 700;
+      box-shadow: 0 4px 16px rgba(37, 99, 235, 0.38);
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .btn-browse:hover {
+      background: #1d4ed8;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(37, 99, 235, 0.48);
+    }
+    .btn-browse svg {
+      stroke-width: 2.4;
+    }
+
+    /* ── BOTTOM 3-CARD VALUE PROPOSITION BANNER ── */
+    .value-props-banner {
+      background: #ffffff;
+      border-radius: 16px;
+      border: 1px solid #eef2f6;
+      box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.04);
+      padding: 20px 36px;
+      display: grid;
+      grid-template-columns: 1fr auto 1fr auto 1fr;
+      align-items: center;
+      gap: 28px;
+      margin-top: 10px;
+      margin-bottom: 8px;
+    }
+    .v-divider {
+      width: 1px;
+      height: 48px;
+      background: #e2e8f0;
+    }
+    .prop-card {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .prop-icon-circle {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .prop-icon-pink {
+      background: #ffe4e6;
+      color: #f43f5e;
+    }
+    .prop-icon-blue {
+      background: #dbeafe;
+      color: #2563eb;
+    }
+    .prop-icon-yellow {
+      background: #fef3c7;
+      color: #f59e0b;
+    }
+    .prop-info {
+      display: flex;
+      flex-direction: column;
+    }
+    .prop-title {
+      font-size: 0.96rem;
+      font-weight: 700;
+      color: #0f172a;
+      margin-bottom: 2px;
+    }
+    .prop-desc {
+      font-size: 0.85rem;
+      color: #64748b;
+      line-height: 1.4;
+      font-weight: 500;
+    }
+
+    /* Responsive */
+    @media (max-width: 992px) {
+      .value-props-banner {
+        grid-template-columns: 1fr;
+        gap: 18px;
+        padding: 18px 24px;
+      }
+      .v-divider {
+        display: none;
+      }
+    }
+    @media (max-width: 640px) {
+      .fav-header-text h1 {
+        font-size: 1.7rem;
+      }
+      .empty-title {
+        font-size: 1.55rem;
+      }
+      .btn-browse {
+        width: 100%;
+        justify-content: center;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<!-- TOP NAVBAR -->
+<header class="site-header">
+  <div class="header-inner">
+    <!-- LEFT: Logo -->
+    <div style="display:flex; align-items:center; justify-content:flex-start;">
+      <a class="brand-logo" th:href="@{/}">
+        <img th:src="@{/assets/logo2.png}" alt="StayNest" class="logo-img">
+      </a>
+    </div>
+
+    <!-- CENTER: Navigation links -->
+    <nav class="nav-links">
+      <a th:href="@{/}">Home</a>
+      <a th:href="@{/pgs}">Find PG</a>
+      <a th:if="${isLoggedIn}" th:href="@{/bookings}">My Bookings</a>
+      <a th:if="${isLoggedIn}" th:href="@{/favorites}" class="active">Favorites</a>
+    </nav>
+
+    <!-- RIGHT: Profile Button & Notifications -->
+    <div class="header-right">
+      <!-- Notification Bell with red indicator dot -->
+      <button class="btn-notification" type="button" aria-label="Notifications" title="Notifications">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+          <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+        </svg>
+        <span class="notification-dot"></span>
+      </button>
+
+      <!-- Profile Button: SHOWN WHEN LOGGED IN -->
+      <div th:if="${isLoggedIn}" class="profile-dropdown">
+        <a th:href="@{/profile}" class="profile-btn">
+          <span class="avatar-circle" th:text="${currentUser != null and !#strings.isEmpty(currentUser) ? #strings.substring(currentUser, 0, 1).toUpperCase() : 'A'}">A</span>
+          <span>Profile</span>
+          <span class="profile-caret">&#9660;</span>
+        </a>
+        <div class="profile-menu">
+          <div class="user-info">
+            Signed in as
+            <strong th:text="${currentUser != null ? currentUser : 'user@example.com'}">user@example.com</strong>
+          </div>
+          <a th:href="@{/profile}">&#128100; My Profile</a>
+          <a th:href="@{/bookings}">&#128215; My Bookings</a>
+          <a th:href="@{/favorites}">&#9829; Favorites</a>
+          <hr>
+          <a th:href="@{/logout}" class="logout-link">&#128682; Logout</a>
+        </div>
+      </div>
+
+      <!-- Auth Buttons: SHOWN WHEN NOT LOGGED IN -->
+      <div th:unless="${isLoggedIn}" class="auth-buttons">
+        <a th:href="@{/login}" class="btn-nav-login">Login</a>
+        <a th:href="@{/register}" class="btn-nav-signup">Sign Up</a>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- MAIN PAGE WRAPPER (WIDER LAYOUT MATCHING PREVIOUS PAGES: 1400px) -->
+<main class="page-wrap">
+
+  <!-- TOP TITLE ROW -->
+  <div class="fav-header">
+    <div class="fav-header-icon">
+      <!-- Pink/Red Heart matching reference image -->
+      <svg width="34" height="34" viewBox="0 0 24 24" fill="url(#titleHeartGrad)">
+        <defs>
+          <linearGradient id="titleHeartGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#fb7185" />
+            <stop offset="100%" stop-color="#e11d48" />
+          </linearGradient>
+        </defs>
+        <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+      </svg>
+    </div>
+    <div class="fav-header-text">
+      <h1>My Favorites</h1>
+      <p>PGs you've saved for later</p>
+    </div>
+  </div>
+
+  <!-- CENTER EMPTY STATE SECTION -->
+  <div class="empty-center-container">
+    
+    <!-- Vector Illustration identical to reference image -->
+    <div class="illustration-wrapper">
+      <svg viewBox="0 0 460 260" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <!-- Soft background aura -->
+          <linearGradient id="auraGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#e0f2fe" stop-opacity="0.85" />
+            <stop offset="100%" stop-color="#eff6ff" stop-opacity="0.3" />
+          </linearGradient>
+
+          <!-- Heart gradient -->
+          <linearGradient id="heartGrad" x1="20%" y1="15%" x2="80%" y2="90%">
+            <stop offset="0%" stop-color="#ffe4e6" />
+            <stop offset="100%" stop-color="#fbcfe8" />
+          </linearGradient>
+
+          <!-- Soft drop shadow -->
+          <filter id="softShadow" x="-20%" y="-20%" width="140%" height="140%">
+            <feDropShadow dx="0" dy="5" stdDeviation="6" flood-color="#0284c7" flood-opacity="0.12" />
+          </filter>
+        </defs>
+
+        <!-- Ambient Backdrop Blob -->
+        <path d="M 120,185 C 100,135 130,85 180,75 C 220,68 250,72 285,78 C 330,86 355,130 345,175 C 340,200 300,215 230,215 C 160,215 130,210 120,185 Z" fill="url(#auraGrad)" />
+
+        <!-- Silhouetted City Skyline (soft blue) -->
+        <rect x="155" y="115" width="28" height="95" rx="3" fill="#cfe4fb" />
+        <rect x="160" y="125" width="6" height="8" rx="1" fill="#ffffff" opacity="0.85" />
+        <rect x="172" y="125" width="6" height="8" rx="1" fill="#ffffff" opacity="0.85" />
+        <rect x="160" y="140" width="6" height="8" rx="1" fill="#ffffff" opacity="0.85" />
+        <rect x="172" y="140" width="6" height="8" rx="1" fill="#ffffff" opacity="0.85" />
+        <rect x="160" y="155" width="6" height="8" rx="1" fill="#ffffff" opacity="0.85" />
+        <rect x="172" y="155" width="6" height="8" rx="1" fill="#ffffff" opacity="0.85" />
+
+        <rect x="180" y="85" width="34" height="125" rx="3" fill="#bddaf7" />
+        <line x1="197" y1="72" x2="197" y2="85" stroke="#93c5fd" stroke-width="2.5" stroke-linecap="round" />
+        <rect x="186" y="96" width="6" height="8" rx="1" fill="#ffffff" opacity="0.85" />
+        <rect x="200" y="96" width="6" height="8" rx="1" fill="#ffffff" opacity="0.85" />
+        <rect x="186" y="112" width="6" height="8" rx="1" fill="#ffffff" opacity="0.85" />
+        <rect x="200" y="112" width="6" height="8" rx="1" fill="#ffffff" opacity="0.85" />
+
+        <rect x="272" y="95" width="32" height="115" rx="3" fill="#bddaf7" />
+        <line x1="288" y1="84" x2="288" y2="95" stroke="#93c5fd" stroke-width="2" stroke-linecap="round" />
+        <rect x="278" y="105" width="6" height="8" rx="1" fill="#ffffff" opacity="0.85" />
+        <rect x="292" y="105" width="6" height="8" rx="1" fill="#ffffff" opacity="0.85" />
+        <rect x="278" y="120" width="6" height="8" rx="1" fill="#ffffff" opacity="0.85" />
+        <rect x="292" y="120" width="6" height="8" rx="1" fill="#ffffff" opacity="0.85" />
+
+        <rect x="300" y="120" width="26" height="90" rx="3" fill="#cfe4fb" />
+        <rect x="306" y="130" width="5" height="7" rx="1" fill="#ffffff" opacity="0.85" />
+        <rect x="315" y="130" width="5" height="7" rx="1" fill="#ffffff" opacity="0.85" />
+        <rect x="306" y="144" width="5" height="7" rx="1" fill="#ffffff" opacity="0.85" />
+        <rect x="315" y="144" width="5" height="7" rx="1" fill="#ffffff" opacity="0.85" />
+
+        <!-- Ground Platform / Island -->
+        <ellipse cx="230" cy="220" rx="160" ry="16" fill="#dbeafe" opacity="0.75" />
+        <ellipse cx="230" cy="216" rx="148" ry="12" fill="#e2e8f0" opacity="0.5" />
+
+        <!-- Nature: Green Trees & Bushes -->
+        <!-- Tree Left 1 -->
+        <rect x="148" y="178" width="4" height="28" fill="#92400e" rx="1.5" />
+        <circle cx="150" cy="170" r="16" fill="#34d399" />
+        <circle cx="145" cy="174" r="12" fill="#10b981" />
+        <!-- Bush Left -->
+        <circle cx="172" cy="196" r="11" fill="#10b981" />
+        <circle cx="180" cy="200" r="8" fill="#34d399" />
+
+        <!-- Tree Right -->
+        <rect x="330" y="176" width="4" height="30" fill="#92400e" rx="1.5" />
+        <circle cx="332" cy="168" r="15" fill="#34d399" />
+        <circle cx="338" cy="172" r="12" fill="#10b981" />
+        <!-- Bush Right -->
+        <circle cx="316" cy="197" r="10" fill="#10b981" />
+        <circle cx="348" cy="200" r="9" fill="#059669" />
+
+        <!-- Houses in Front -->
+        <!-- House 1 (Left - Blue body, Navy pitched roof) -->
+        <path d="M192,168 L224,146 L256,168 Z" fill="#2563eb" />
+        <rect x="198" y="167" width="52" height="42" fill="#dbeafe" rx="2" />
+        <!-- Chimney -->
+        <rect x="238" y="148" width="6" height="12" fill="#1d4ed8" rx="1" />
+        <!-- Door -->
+        <rect x="219" y="185" width="11" height="24" fill="#1d4ed8" rx="2" />
+        <circle cx="227" cy="197" r="1" fill="#ffffff" />
+        <!-- Windows (Warm glowing yellow) -->
+        <rect x="204" y="174" width="11" height="11" fill="#fef08a" stroke="#facc15" stroke-width="1.2" rx="1.5" />
+        <line x1="209.5" y1="174" x2="209.5" y2="185" stroke="#facc15" stroke-width="0.8" />
+        <line x1="204" y1="179.5" x2="215" y2="179.5" stroke="#facc15" stroke-width="0.8" />
+
+        <rect x="235" y="174" width="11" height="11" fill="#fef08a" stroke="#facc15" stroke-width="1.2" rx="1.5" />
+        <line x1="240.5" y1="174" x2="240.5" y2="185" stroke="#facc15" stroke-width="0.8" />
+        <line x1="235" y1="179.5" x2="246" y2="179.5" stroke="#facc15" stroke-width="0.8" />
+
+        <!-- House 2 (Right - Cream/White body, Soft Blue pitched roof) -->
+        <path d="M246,160 L282,138 L318,160 Z" fill="#3b82f6" />
+        <rect x="252" y="159" width="60" height="50" fill="#ffffff" rx="2" stroke="#e2e8f0" stroke-width="1.2" />
+        <!-- Door -->
+        <rect x="277" y="184" width="12" height="25" fill="#2563eb" rx="2" />
+        <!-- Windows (Warm glowing yellow) -->
+        <!-- Upper floor windows -->
+        <rect x="260" y="166" width="10" height="10" fill="#fef08a" stroke="#facc15" stroke-width="1" rx="1.5" />
+        <line x1="265" y1="166" x2="265" y2="176" stroke="#facc15" stroke-width="0.8" />
+        <line x1="260" y1="171" x2="270" y2="171" stroke="#facc15" stroke-width="0.8" />
+
+        <rect x="294" y="166" width="10" height="10" fill="#fef08a" stroke="#facc15" stroke-width="1" rx="1.5" />
+        <line x1="299" y1="166" x2="299" y2="176" stroke="#facc15" stroke-width="0.8" />
+        <line x1="294" y1="171" x2="304" y2="171" stroke="#facc15" stroke-width="0.8" />
+        <!-- Ground floor windows -->
+        <rect x="260" y="186" width="10" height="10" fill="#fef08a" stroke="#facc15" stroke-width="1" rx="1.5" />
+        <line x1="265" y1="186" x2="265" y2="196" stroke="#facc15" stroke-width="0.8" />
+        <line x1="260" y1="191" x2="270" y2="191" stroke="#facc15" stroke-width="0.8" />
+
+        <rect x="294" y="186" width="10" height="10" fill="#fef08a" stroke="#facc15" stroke-width="1" rx="1.5" />
+        <line x1="299" y1="186" x2="299" y2="196" stroke="#facc15" stroke-width="0.8" />
+        <line x1="294" y1="191" x2="304" y2="191" stroke="#facc15" stroke-width="0.8" />
+
+        <!-- Bush in front of House 2 -->
+        <circle cx="251" cy="205" r="7" fill="#10b981" />
+
+        <!-- Floating Glowing Heart in Center -->
+        <!-- Radiating Sparkle Dashes above heart -->
+        <line x1="230" y1="36" x2="230" y2="45" stroke="#f43f5e" stroke-width="3.5" stroke-linecap="round" />
+        <line x1="214" y1="41" x2="220" y2="49" stroke="#f43f5e" stroke-width="3.5" stroke-linecap="round" />
+        <line x1="246" y1="41" x2="240" y2="49" stroke="#f43f5e" stroke-width="3.5" stroke-linecap="round" />
+
+        <!-- Heart Body: Smooth Plump Heart Shape matching reference image -->
+        <path d="M 230,135
+                 C 230,135 186,110 186,83
+                 C 186,65 200,53 216,53
+                 C 223,53 227,56 230,60
+                 C 233,56 237,53 244,53
+                 C 260,53 274,65 274,83
+                 C 274,110 230,135 230,135 Z" 
+              fill="url(#heartGrad)" 
+              stroke="#f43f5e" 
+              stroke-width="5" 
+              stroke-linejoin="round" 
+              stroke-linecap="round"
+              filter="url(#softShadow)" />
+      </svg>
+    </div>
+
+    <!-- Title & Subtitle -->
+    <h2 class="empty-title">No Favorites Yet</h2>
+    <p class="empty-subtitle">Click the heart icon on any PG to save it here for quick access later.</p>
+
+    <!-- Browse CTA Button -->
+    <a th:href="@{/pgs}" class="btn-browse">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="11" cy="11" r="8"></circle>
+        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+      </svg>
+      <span>Browse PGs</span>
+      <span style="font-size: 1.15rem; line-height: 1;">&rarr;</span>
+    </a>
+  </div>
+
+  <!-- BOTTOM 3-CARD VALUE PROPOSITION BANNER -->
+  <div class="value-props-banner">
+    
+    <!-- Prop 1: Save Your Favorites -->
+    <div class="prop-card">
+      <div class="prop-icon-circle prop-icon-pink">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="#f43f5e">
+          <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+        </svg>
+      </div>
+      <div class="prop-info">
+        <div class="prop-title">Save Your Favorites</div>
+        <div class="prop-desc">Click the ♡ icon on any PG to save it to your list.</div>
+      </div>
+    </div>
+
+    <!-- Vertical Divider -->
+    <div class="v-divider"></div>
+
+    <!-- Prop 2: Access Anytime -->
+    <div class="prop-card">
+      <div class="prop-icon-circle prop-icon-blue">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"></circle>
+          <polyline points="12 6 12 12 16 14"></polyline>
+        </svg>
+      </div>
+      <div class="prop-info">
+        <div class="prop-title">Access Anytime</div>
+        <div class="prop-desc">Find your saved PGs quickly whenever you need.</div>
+      </div>
+    </div>
+
+    <!-- Vertical Divider -->
+    <div class="v-divider"></div>
+
+    <!-- Prop 3: Compare & Decide -->
+    <div class="prop-card">
+      <div class="prop-icon-circle prop-icon-yellow">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="#f59e0b">
+          <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+        </svg>
+      </div>
+      <div class="prop-info">
+        <div class="prop-title">Compare & Decide</div>
+        <div class="prop-desc">Keep multiple options and choose the best one.</div>
+      </div>
+    </div>
+
+  </div>
+
+</main>
+
+</body>
+</html>

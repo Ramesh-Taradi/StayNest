@@ -1,0 +1,2015 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>User Profile | StayNest</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    
+    :root {
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --primary-soft: #eff6ff;
+      --primary-border: #bfdbfe;
+      --text-dark: #0f172a;
+      --text-muted: #64748b;
+      --text-sub: #475569;
+      --border-color: #e2e8f0;
+      --border-light: #f1f5f9;
+      --bg-page: #f8fafc;
+      --card-bg: #ffffff;
+      --card-radius: 18px;
+      --shadow-sm: 0 2px 10px rgba(15,23,42,0.03);
+      --shadow-md: 0 4px 20px rgba(15,23,42,0.06);
+      --success-green: #10b981;
+      --success-bg: #ecfdf5;
+      --danger-red: #ef4444;
+      --danger-bg: #fef2f2;
+      --amber-accent: #f59e0b;
+      --pink-heart: #ec4899;
+      --pink-bg: #fdf2f8;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background: var(--bg-page);
+      color: var(--text-dark);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      line-height: 1.5;
+    }
+
+    /* ── STICKY TOP NAVBAR ── */
+    header.site-header {
+      background: #0b1329;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 14px rgba(0,0,0,0.28);
+    }
+    .header-inner {
+      max-width: 1400px;
+      width: 95%;
+      margin: 0 auto;
+      padding: 0 20px;
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: center;
+      height: 66px;
+    }
+    .brand-logo {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+    }
+    .brand-logo img {
+      height: 44px;
+      width: auto;
+      border-radius: 8px;
+      background: #ffffff;
+      padding: 3px;
+      display: block;
+    }
+
+    /* Nav Links */
+    nav.nav-links {
+      display: flex;
+      align-items: center;
+      gap: 32px;
+      justify-content: center;
+    }
+    nav.nav-links a {
+      color: #94a3b8;
+      text-decoration: none;
+      font-size: 0.92rem;
+      font-weight: 600;
+      transition: color .2s;
+      position: relative;
+      padding: 8px 0;
+    }
+    nav.nav-links a:hover {
+      color: #ffffff;
+    }
+    nav.nav-links a.active {
+      color: #ffffff;
+      font-weight: 700;
+    }
+    nav.nav-links a.active::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: var(--primary);
+      border-radius: 3px 3px 0 0;
+    }
+
+    /* Nav Actions */
+    .header-right {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 18px;
+    }
+    .btn-notification {
+      position: relative;
+      background: none;
+      border: none;
+      color: #cbd5e1;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 7px;
+      border-radius: 50%;
+      transition: color .2s, background .2s;
+    }
+    .btn-notification:hover {
+      color: #ffffff;
+      background: rgba(255,255,255,0.08);
+    }
+    .notification-dot {
+      position: absolute;
+      top: 6px;
+      right: 6px;
+      width: 8px;
+      height: 8px;
+      background: #ef4444;
+      border-radius: 50%;
+      border: 2px solid #0b1329;
+    }
+
+    /* Profile Button Dropdown */
+    .profile-dropdown {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+    .profile-btn {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: #2563eb;
+      border: 1px solid #3b82f6;
+      padding: 5px 14px 5px 6px;
+      border-radius: 20px;
+      color: #ffffff;
+      text-decoration: none;
+      font-size: 0.88rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background .2s, border-color .2s;
+    }
+    .profile-btn:hover {
+      background: #1d4ed8;
+      border-color: #2563eb;
+    }
+    .avatar-circle-nav {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.25);
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 0.82rem;
+    }
+    .profile-caret {
+      font-size: 0.65rem;
+      color: rgba(255,255,255,0.8);
+      margin-left: 2px;
+    }
+    .profile-menu {
+      position: absolute;
+      top: calc(100% + 12px);
+      right: 0;
+      background: #0f172a;
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 12px;
+      padding: 6px 0;
+      min-width: 210px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.35);
+      display: none;
+      z-index: 200;
+    }
+    .profile-dropdown:hover .profile-menu,
+    .profile-dropdown:focus-within .profile-menu {
+      display: block;
+    }
+    .profile-menu-user {
+      padding: 10px 16px;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      font-size: 0.82rem;
+      color: #94a3b8;
+    }
+    .profile-menu-user strong {
+      color: #ffffff;
+      font-size: 0.88rem;
+      display: block;
+      margin-top: 2px;
+    }
+    .profile-menu a {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 16px;
+      color: #cbd5e1;
+      text-decoration: none;
+      font-size: 0.85rem;
+      font-weight: 600;
+      transition: background .15s, color .15s;
+    }
+    .profile-menu a:hover {
+      background: rgba(255,255,255,0.08);
+      color: #ffffff;
+    }
+    .profile-menu hr {
+      border: none;
+      border-top: 1px solid rgba(255,255,255,0.08);
+      margin: 6px 0;
+    }
+    .profile-menu a.logout-link {
+      color: #f87171 !important;
+    }
+
+    /* ── EXPANDED PAGE WRAPPER (1400px Width) ── */
+    .page-wrap {
+      max-width: 1400px;
+      width: 95%;
+      margin: 0 auto;
+      padding: 24px 20px 60px;
+      flex: 1;
+    }
+
+    /* ── HERO BANNER ── */
+    .hero-banner {
+      background: linear-gradient(105deg, #dbeafe 0%, #eff6ff 48%, #e0f2fe 100%);
+      border-radius: 20px;
+      padding: 30px 44px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 3px 14px rgba(37,99,235,0.06);
+      margin-bottom: 24px;
+      border: 1px solid rgba(191,219,254,0.5);
+    }
+    .hero-text h1 {
+      font-size: 2.15rem;
+      font-weight: 800;
+      color: #0f172a;
+      letter-spacing: -0.6px;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .hero-text h1 .wave {
+      display: inline-block;
+      animation: waveHand 2.2s infinite;
+      transform-origin: 70% 70%;
+    }
+    @keyframes waveHand {
+      0% { transform: rotate( 0.0deg) }
+      10% { transform: rotate(14.0deg) }
+      20% { transform: rotate(-8.0deg) }
+      30% { transform: rotate(14.0deg) }
+      40% { transform: rotate(-4.0deg) }
+      50% { transform: rotate(10.0deg) }
+      60% { transform: rotate( 0.0deg) }
+      100% { transform: rotate( 0.0deg) }
+    }
+    .hero-text p {
+      font-size: 1.02rem;
+      color: #64748b;
+      font-weight: 500;
+    }
+    .hero-visual {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      position: relative;
+    }
+    .hero-visual img {
+      max-height: 140px;
+      width: auto;
+      object-fit: contain;
+      mix-blend-mode: multiply;
+      transform: scale(1.04);
+      transform-origin: right center;
+    }
+
+    /* ── MAIN LAYOUT GRID (SIDEBAR + CONTENT) ── */
+    .profile-layout {
+      display: grid;
+      grid-template-columns: 285px minmax(0, 1fr);
+      gap: 24px;
+      align-items: start;
+    }
+
+    /* ── LEFT SIDEBAR CARD ── */
+    .sidebar-card {
+      background: var(--card-bg);
+      border-radius: var(--card-radius);
+      padding: 32px 20px 24px;
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--border-light);
+      text-align: center;
+      position: sticky;
+      top: 90px;
+    }
+    .avatar-wrapper {
+      position: relative;
+      width: 106px;
+      height: 106px;
+      margin: 0 auto 16px;
+    }
+    .avatar-circle-lg {
+      width: 106px;
+      height: 106px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #3b82f6, #4f46e5);
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.85rem;
+      font-weight: 800;
+      box-shadow: 0 8px 24px rgba(37,99,235,0.22);
+      border: 3px solid #ffffff;
+      user-select: none;
+      background-size: cover;
+      background-position: center;
+    }
+    .avatar-camera-btn {
+      position: absolute;
+      right: 0;
+      bottom: 2px;
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: #ffffff;
+      border: 2px solid #ffffff;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.18);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #64748b;
+      cursor: pointer;
+      transition: all .2s;
+    }
+    .avatar-camera-btn:hover {
+      background: #eff6ff;
+      color: var(--primary);
+      transform: scale(1.08);
+    }
+
+    .user-fullname {
+      font-size: 1.28rem;
+      font-weight: 800;
+      color: var(--text-dark);
+      margin-bottom: 4px;
+      letter-spacing: -0.3px;
+    }
+    .user-email-text {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      margin-bottom: 14px;
+      word-break: break-all;
+    }
+    .pill-active-member {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #dcfce7;
+      color: #15803d;
+      font-size: 0.78rem;
+      font-weight: 700;
+      padding: 4px 14px;
+      border-radius: 9999px;
+      margin-bottom: 22px;
+    }
+    .pill-active-member::before {
+      content: '';
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #22c55e;
+      display: inline-block;
+    }
+
+    /* Sidebar Navigation Menu */
+    .sidebar-nav {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      text-align: left;
+    }
+    .sidebar-nav-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 11px 16px;
+      border-radius: 10px;
+      text-decoration: none;
+      color: var(--text-sub);
+      font-size: 0.92rem;
+      font-weight: 600;
+      transition: all .15s;
+    }
+    .sidebar-nav-item:hover {
+      background: #f8fafc;
+      color: var(--text-dark);
+    }
+    .sidebar-nav-item.active {
+      background: #eff6ff;
+      color: var(--primary);
+      font-weight: 700;
+      position: relative;
+    }
+    .sidebar-nav-item.active::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 8px;
+      bottom: 8px;
+      width: 3.5px;
+      background: var(--primary);
+      border-radius: 0 4px 4px 0;
+    }
+    .sidebar-nav-item svg {
+      width: 20px;
+      height: 20px;
+      flex-shrink: 0;
+      color: currentColor;
+    }
+    .sidebar-divider {
+      height: 1px;
+      background: #f1f5f9;
+      margin: 10px 0;
+    }
+    .sidebar-nav-item.logout {
+      color: var(--danger-red);
+    }
+    .sidebar-nav-item.logout:hover {
+      background: var(--danger-bg);
+      color: #dc2626;
+    }
+
+    /* ── RIGHT MAIN CONTENT AREA ── */
+    .main-content-flow {
+      display: flex;
+      flex-direction: column;
+      gap: 22px;
+    }
+
+    /* ── 4 STAT CARDS ROW ── */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+    }
+    .stat-card {
+      background: var(--card-bg);
+      border-radius: 16px;
+      border: 1px solid var(--border-light);
+      padding: 18px 20px;
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      text-decoration: none;
+      transition: transform .2s, box-shadow .2s;
+    }
+    .stat-card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+    }
+    .stat-icon-box {
+      width: 46px;
+      height: 46px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .stat-icon-box.blue {
+      background: #eff6ff;
+      color: #2563eb;
+    }
+    .stat-icon-box.green {
+      background: #ecfdf5;
+      color: #10b981;
+    }
+    .stat-icon-box.red {
+      background: #fef2f2;
+      color: #ef4444;
+    }
+    .stat-icon-box.pink {
+      background: #fdf2f8;
+      color: #ec4899;
+    }
+    .stat-content {
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+    .stat-number {
+      font-size: 1.45rem;
+      font-weight: 800;
+      color: var(--text-dark);
+      line-height: 1.1;
+      margin-bottom: 2px;
+    }
+    .stat-label {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+    .stat-link {
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--primary);
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      text-decoration: none;
+      transition: gap .15s;
+    }
+    .stat-card:hover .stat-link {
+      gap: 7px;
+    }
+
+    /* ── TWO-COLUMN SPLIT (MIDDLE FORM & RIGHT WIDGETS) ── */
+    .content-columns {
+      display: grid;
+      grid-template-columns: minmax(0, 1.85fr) minmax(0, 1.15fr);
+      gap: 22px;
+      align-items: start;
+    }
+
+    .column-left {
+      display: flex;
+      flex-direction: column;
+      gap: 22px;
+    }
+    .column-right {
+      display: flex;
+      flex-direction: column;
+      gap: 22px;
+    }
+
+    /* Standard Card Container */
+    .standard-card {
+      background: var(--card-bg);
+      border-radius: var(--card-radius);
+      border: 1px solid var(--border-light);
+      padding: 26px 28px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .card-header-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+    .card-title-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .card-title-group svg {
+      width: 22px;
+      height: 22px;
+      color: var(--primary);
+    }
+    .card-title-group h2 {
+      font-size: 1.22rem;
+      font-weight: 800;
+      color: var(--text-dark);
+      letter-spacing: -0.3px;
+    }
+    .btn-card-action {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border: 1.5px solid #cbd5e1;
+      background: transparent;
+      padding: 6px 16px;
+      border-radius: 9999px;
+      font-size: 0.84rem;
+      font-weight: 700;
+      color: var(--primary);
+      cursor: pointer;
+      text-decoration: none;
+      transition: all .2s;
+      font-family: inherit;
+    }
+    .btn-card-action:hover {
+      border-color: var(--primary);
+      background: #eff6ff;
+    }
+    .btn-card-action svg {
+      width: 14px;
+      height: 14px;
+    }
+
+    /* ── PERSONAL INFORMATION FORM ── */
+    .profile-form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px 22px;
+    }
+    .form-group {
+      display: flex;
+      flex-direction: column;
+    }
+    .form-group label {
+      font-size: 0.84rem;
+      font-weight: 700;
+      color: #334155;
+      margin-bottom: 7px;
+    }
+    .input-icon-wrap {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+    .input-icon-wrap .field-icon {
+      position: absolute;
+      left: 14px;
+      color: #94a3b8;
+      width: 18px;
+      height: 18px;
+      pointer-events: none;
+    }
+    .input-icon-wrap input,
+    .input-icon-wrap select {
+      width: 100%;
+      height: 44px;
+      padding: 0 14px 0 42px;
+      border: 1.5px solid var(--border-color);
+      border-radius: 10px;
+      font-size: 0.92rem;
+      color: #1e293b;
+      font-family: inherit;
+      font-weight: 500;
+      background: #ffffff;
+      outline: none;
+      transition: border-color .2s, box-shadow .2s;
+    }
+    .input-icon-wrap select {
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2364748b' stroke-width='2'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 14px center;
+      background-size: 16px;
+      cursor: pointer;
+    }
+    .input-icon-wrap input:focus,
+    .input-icon-wrap select:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(37,99,235,0.12);
+    }
+    .input-icon-wrap input:disabled,
+    .input-icon-wrap select:disabled {
+      background: #f8fafc;
+      color: #64748b;
+      cursor: not-allowed;
+    }
+
+    .btn-save-changes {
+      background: var(--primary);
+      color: #ffffff;
+      font-weight: 700;
+      font-size: 0.92rem;
+      padding: 12px 24px;
+      border-radius: 10px;
+      border: none;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 22px;
+      box-shadow: 0 4px 14px rgba(37,99,235,0.28);
+      transition: all .2s;
+      font-family: inherit;
+    }
+    .btn-save-changes:hover {
+      background: var(--primary-hover);
+      transform: translateY(-1px);
+      box-shadow: 0 6px 18px rgba(37,99,235,0.35);
+    }
+    .btn-save-changes:active {
+      transform: translateY(0);
+    }
+    .btn-save-changes svg {
+      width: 17px;
+      height: 17px;
+    }
+
+    /* ── RECENT BOOKINGS CARD ── */
+    .bookings-list {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .booking-item-card {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 14px 18px;
+      border-radius: 14px;
+      border: 1px solid var(--border-light);
+      background: #ffffff;
+      transition: border-color .2s, box-shadow .2s;
+    }
+    .booking-item-card:hover {
+      border-color: #cbd5e1;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+    }
+    .booking-left-part {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      min-width: 0;
+    }
+    .booking-thumb {
+      width: 84px;
+      height: 64px;
+      border-radius: 10px;
+      object-fit: cover;
+      flex-shrink: 0;
+      background: #e2e8f0;
+    }
+    .booking-info {
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+    .booking-title {
+      font-size: 1rem;
+      font-weight: 800;
+      color: var(--text-dark);
+      margin-bottom: 3px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .booking-location {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      margin-bottom: 4px;
+    }
+    .booking-location svg {
+      width: 13px;
+      height: 13px;
+      color: #ef4444;
+      flex-shrink: 0;
+    }
+    .booking-meta-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 0.78rem;
+      color: #64748b;
+      font-weight: 600;
+    }
+    .booking-meta-item {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .booking-meta-item svg {
+      width: 14px;
+      height: 14px;
+      color: #94a3b8;
+    }
+
+    .booking-right-part {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      flex-shrink: 0;
+    }
+    .badge-status {
+      font-size: 0.74rem;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      padding: 5px 12px;
+      border-radius: 9999px;
+      text-transform: uppercase;
+    }
+    .badge-status.confirmed, .badge-status.completed {
+      background: var(--success-bg);
+      color: #15803d;
+    }
+    .badge-status.cancelled {
+      background: var(--danger-bg);
+      color: #b91c1c;
+    }
+    .btn-view-details {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 7px 16px;
+      border-radius: 8px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--primary);
+      border: 1.5px solid var(--primary);
+      background: transparent;
+      text-decoration: none;
+      transition: all .2s;
+    }
+    .btn-view-details:hover {
+      background: var(--primary);
+      color: #ffffff;
+    }
+
+    .empty-bookings-box {
+      text-align: center;
+      padding: 30px 20px;
+      background: #f8fafc;
+      border-radius: 12px;
+      border: 1.5px dashed var(--border-color);
+    }
+    .empty-bookings-box p {
+      color: var(--text-muted);
+      font-size: 0.92rem;
+      margin-bottom: 12px;
+      font-weight: 500;
+    }
+
+    /* ── RIGHT COLUMN: PROFILE COMPLETION ── */
+    .completion-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 1.05rem;
+      font-weight: 800;
+      color: var(--text-dark);
+      margin-bottom: 16px;
+    }
+    .completion-header svg {
+      color: var(--amber-accent);
+      width: 20px;
+      height: 20px;
+    }
+
+    .radial-progress-box {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      margin-bottom: 20px;
+      padding-bottom: 18px;
+      border-bottom: 1px solid var(--border-light);
+    }
+    .circular-chart {
+      position: relative;
+      width: 72px;
+      height: 72px;
+      flex-shrink: 0;
+    }
+    .circular-chart svg {
+      width: 100%;
+      height: 100%;
+      transform: rotate(-90deg);
+    }
+    .circle-bg {
+      fill: none;
+      stroke: #e2e8f0;
+      stroke-width: 3.5;
+    }
+    .circle-progress {
+      fill: none;
+      stroke: var(--primary);
+      stroke-width: 3.5;
+      stroke-linecap: round;
+      stroke-dasharray: 100, 100;
+      stroke-dashoffset: 25; /* dynamic */
+      transition: stroke-dashoffset 0.8s ease-out;
+    }
+    .circle-percent-text {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 0.98rem;
+      font-weight: 800;
+      color: var(--text-dark);
+    }
+    .progress-desc h4 {
+      font-size: 0.98rem;
+      font-weight: 800;
+      color: var(--text-dark);
+      margin-bottom: 3px;
+    }
+    .progress-desc p {
+      font-size: 0.81rem;
+      color: var(--text-muted);
+      line-height: 1.35;
+    }
+
+    .completion-checklist {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .checklist-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.86rem;
+      font-weight: 600;
+      color: #334155;
+    }
+    .checklist-item.done {
+      color: #1e293b;
+    }
+    .checklist-item.pending {
+      color: #64748b;
+    }
+    .check-icon-circle {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .check-icon-circle.done {
+      background: #22c55e;
+      color: #ffffff;
+    }
+    .check-icon-circle.done svg {
+      width: 12px;
+      height: 12px;
+    }
+    .check-icon-circle.pending {
+      border: 1.5px solid #cbd5e1;
+      background: transparent;
+    }
+
+    /* ── RIGHT COLUMN: QUICK LINKS ── */
+    .quick-links-group {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .quick-link-tile {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 13px 16px;
+      background: #f8fafc;
+      border: 1px solid var(--border-light);
+      border-radius: 14px;
+      text-decoration: none;
+      transition: all .2s;
+    }
+    .quick-link-tile:hover {
+      background: #eff6ff;
+      border-color: #bfdbfe;
+      transform: translateX(3px);
+    }
+    .ql-tile-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .ql-icon-round {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .ql-icon-round.blue {
+      background: #eff6ff;
+      color: #2563eb;
+    }
+    .ql-icon-round.pink {
+      background: #fdf2f8;
+      color: #ec4899;
+    }
+    .ql-text-block h5 {
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: var(--text-dark);
+      margin-bottom: 2px;
+    }
+    .ql-text-block p {
+      font-size: 0.76rem;
+      color: var(--text-muted);
+    }
+    .ql-chevron {
+      color: #94a3b8;
+      font-size: 1.25rem;
+      font-weight: 700;
+      transition: transform .15s;
+    }
+    .quick-link-tile:hover .ql-chevron {
+      color: var(--primary);
+      transform: translateX(2px);
+    }
+
+    /* Toast Notification */
+    #toastMessage {
+      position: fixed;
+      bottom: 28px;
+      right: 28px;
+      background: #0f172a;
+      color: #ffffff;
+      padding: 14px 22px;
+      border-radius: 12px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      z-index: 1000;
+      opacity: 0;
+      transform: translateY(20px);
+      pointer-events: none;
+      transition: all .3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    #toastMessage.show {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 1120px) {
+      .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .content-columns {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 860px) {
+      .profile-layout {
+        grid-template-columns: 1fr;
+      }
+      .sidebar-card {
+        position: static;
+      }
+      .header-inner {
+        grid-template-columns: auto 1fr;
+      }
+      nav.nav-links {
+        display: none;
+      }
+      .hero-banner {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 24px 20px;
+        gap: 16px;
+      }
+      .hero-visual {
+        align-self: flex-end;
+      }
+      .profile-form-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<!-- STICKY SITE NAVBAR -->
+<header class="site-header">
+  <div class="header-inner">
+    <!-- LEFT: Brand Logo -->
+    <a class="brand-logo" th:href="@{/}">
+      <img th:src="@{/assets/logo2.png}" alt="StayNest">
+    </a>
+
+    <!-- CENTER: Navigation Links -->
+    <nav class="nav-links">
+      <a th:href="@{/}">Home</a>
+      <a th:href="@{/pgs}">Find PG</a>
+      <a th:if="${isLoggedIn}" th:href="@{/bookings}">My Bookings</a>
+      <a th:if="${isLoggedIn}" th:href="@{/favorites}">Favorites</a>
+    </nav>
+
+    <!-- RIGHT: Notification Bell & Profile Dropdown -->
+    <div class="header-right">
+      <!-- Notification Icon Button -->
+      <button class="btn-notification" type="button" aria-label="Notifications" onclick="showToast('You have no unread notifications.')">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+          <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+        </svg>
+        <span class="notification-dot"></span>
+      </button>
+
+      <!-- Profile Dropdown (when logged in) -->
+      <div th:if="${isLoggedIn}" class="profile-dropdown">
+        <a th:href="@{/profile}" class="profile-btn">
+          <span class="avatar-circle-nav" id="navAvatarInitial"
+                th:text="${profileUser != null and profileUser.name != null and !#strings.isEmpty(profileUser.name) ? #strings.substring(profileUser.name, 0, 1).toUpperCase() : (currentUser != null and !#strings.isEmpty(currentUser) ? #strings.substring(currentUser, 0, 1).toUpperCase() : 'U')}">U</span>
+          <span>Profile</span>
+          <span class="profile-caret">&#9660;</span>
+        </a>
+        <div class="profile-menu">
+          <div class="profile-menu-user">
+            Signed in as
+            <strong id="dropdownUserEmail" th:text="${currentUser != null ? currentUser : (profileUser != null ? profileUser.email : 'user@example.com')}">user@example.com</strong>
+          </div>
+          <a th:href="@{/profile}">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            My Profile
+          </a>
+          <a th:href="@{/bookings}">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            My Bookings
+          </a>
+          <a th:href="@{/favorites}">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+            Favorites
+          </a>
+          <hr>
+          <a th:href="@{/logout}" class="logout-link">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+            Logout
+          </a>
+        </div>
+      </div>
+
+      <!-- Auth Buttons (when not logged in) -->
+      <div th:unless="${isLoggedIn}" style="display:flex;gap:10px;align-items:center;">
+        <a th:href="@{/login}" style="color:#94a3b8;text-decoration:none;font-weight:600;font-size:0.9rem;padding:7px 14px;border:1.5px solid rgba(255,255,255,.2);border-radius:8px;">Login</a>
+        <a th:href="@{/register}" style="color:white;background:#2563eb;padding:8px 18px;border-radius:8px;text-decoration:none;font-weight:700;font-size:0.9rem;">Sign Up</a>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- MAIN PAGE CONTAINER (EXPANDED TO 1400px WITH PROPER ALIGNMENT) -->
+<main class="page-wrap">
+
+  <!-- TOP HERO GREETING BANNER -->
+  <section class="hero-banner">
+    <div class="hero-text">
+      <h1>Hello, <span id="heroUserName"
+                       th:text="${profileUser != null and profileUser.name != null and !#strings.isEmpty(profileUser.name) ? profileUser.name : (currentUser != null ? #strings.arraySplit(currentUser, '@')[0] : 'User')}">User</span>! <span class="wave">👋</span></h1>
+      <p>Manage your account, bookings and preferences</p>
+    </div>
+    <div class="hero-visual">
+      <img th:src="@{/assets/my_bookings_hero.png}" alt="Your Comfort Our Priority">
+    </div>
+  </section>
+
+  <!-- MAIN PROFILE LAYOUT (SIDEBAR + MAIN FLOW) -->
+  <div class="profile-layout">
+
+    <!-- ── LEFT SIDEBAR CARD ── -->
+    <aside class="sidebar-card">
+      <!-- Big Avatar with Camera Upload Icon -->
+      <div class="avatar-wrapper">
+        <div class="avatar-circle-lg" id="avatarDisplay"
+             th:text="${profileUser != null and profileUser.name != null and !#strings.isEmpty(profileUser.name) ? #strings.substring(profileUser.name, 0, 1).toUpperCase() : (currentUser != null and !#strings.isEmpty(currentUser) ? #strings.substring(currentUser, 0, 1).toUpperCase() : 'U')}">U</div>
+        <label for="avatarUploadInput" class="avatar-camera-btn" title="Change Avatar Photo">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+            <circle cx="12" cy="13" r="4"></circle>
+          </svg>
+        </label>
+        <input type="file" id="avatarUploadInput" accept="image/*" style="display:none;" onchange="handleAvatarChange(event)">
+      </div>
+
+      <!-- Dynamic User Fullname -->
+      <h2 class="user-fullname" id="sidebarUserName"
+          th:text="${profileUser != null and profileUser.name != null and !#strings.isEmpty(profileUser.name) ? profileUser.name : (currentUser != null ? #strings.arraySplit(currentUser, '@')[0] : 'User')}">User</h2>
+      <!-- Dynamic User Email -->
+      <p class="user-email-text" id="sidebarUserEmail"
+         th:text="${profileUser != null ? profileUser.email : (currentUser != null ? currentUser : 'user@example.com')}">user@example.com</p>
+
+      <!-- Active Member Pill -->
+      <div>
+        <span class="pill-active-member">Active Member</span>
+      </div>
+
+      <!-- Sidebar Navigation Menu -->
+      <nav class="sidebar-nav">
+        <a th:href="@{/profile}" class="sidebar-nav-item active">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+            <circle cx="12" cy="7" r="4"></circle>
+          </svg>
+          My Profile
+        </a>
+        <a th:href="@{/bookings}" class="sidebar-nav-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+            <line x1="16" y1="2" x2="16" y2="6"></line>
+            <line x1="8" y1="2" x2="8" y2="6"></line>
+            <line x1="3" y1="10" x2="21" y2="10"></line>
+          </svg>
+          My Bookings
+        </a>
+        <a th:href="@{/favorites}" class="sidebar-nav-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+          </svg>
+          Favorites
+        </a>
+        <a href="javascript:void(0)" onclick="showToast('Notification settings loaded.')" class="sidebar-nav-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+            <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+          </svg>
+          Notifications
+        </a>
+        <a href="javascript:void(0)" onclick="showToast('Account settings are synced.')" class="sidebar-nav-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="3"></circle>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+          </svg>
+          Settings
+        </a>
+        <div class="sidebar-divider"></div>
+        <a th:href="@{/logout}" class="sidebar-nav-item logout">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+            <polyline points="16 17 21 12 16 7"></polyline>
+            <line x1="21" y1="12" x2="9" y2="12"></line>
+          </svg>
+          Logout
+        </a>
+      </nav>
+    </aside>
+
+    <!-- ── RIGHT MAIN FLOW ── -->
+    <section class="main-content-flow">
+
+      <!-- ── TOP 4 DYNAMIC STAT CARDS ROW ── -->
+      <div class="stats-grid">
+        <!-- 1. Total Bookings -->
+        <a th:href="@{/bookings}" class="stat-card">
+          <div class="stat-icon-box blue">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+              <line x1="16" y1="2" x2="16" y2="6"></line>
+              <line x1="8" y1="2" x2="8" y2="6"></line>
+              <line x1="3" y1="10" x2="21" y2="10"></line>
+            </svg>
+          </div>
+          <div class="stat-content">
+            <div class="stat-number" id="statTotalBookings"
+                 th:text="${totalBookingsCount != null ? totalBookingsCount : (userBookings != null ? userBookings.size() : (bookings != null ? bookings.size() : 0))}">0</div>
+            <div class="stat-label">Total Bookings</div>
+            <span class="stat-link">View All &rarr;</span>
+          </div>
+        </a>
+
+        <!-- 2. Confirmed -->
+        <a th:href="@{/bookings}" class="stat-card">
+          <div class="stat-icon-box green">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+              <polyline points="22 4 12 14.01 9 11.01"></polyline>
+            </svg>
+          </div>
+          <div class="stat-content">
+            <div class="stat-number" id="statConfirmedBookings"
+                 th:text="${confirmedBookingsCount != null ? confirmedBookingsCount : 0}">0</div>
+            <div class="stat-label">Confirmed</div>
+            <span class="stat-link">View Details &rarr;</span>
+          </div>
+        </a>
+
+        <!-- 3. Cancelled -->
+        <a th:href="@{/bookings}" class="stat-card">
+          <div class="stat-icon-box red">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="15" y1="9" x2="9" y2="15"></line>
+              <line x1="9" y1="9" x2="15" y2="15"></line>
+            </svg>
+          </div>
+          <div class="stat-content">
+            <div class="stat-number" id="statCancelledBookings"
+                 th:text="${cancelledBookingsCount != null ? cancelledBookingsCount : 0}">0</div>
+            <div class="stat-label">Cancelled</div>
+            <span class="stat-link">View Details &rarr;</span>
+          </div>
+        </a>
+
+        <!-- 4. Favorites -->
+        <a th:href="@{/favorites}" class="stat-card">
+          <div class="stat-icon-box pink">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"></path>
+            </svg>
+          </div>
+          <div class="stat-content">
+            <div class="stat-number" id="statFavorites">0</div>
+            <div class="stat-label">Favorites</div>
+            <span class="stat-link">View Favorites &rarr;</span>
+          </div>
+        </a>
+      </div>
+
+      <!-- ── TWO-COLUMN SPLIT (FORM & WIDGETS) ── -->
+      <div class="content-columns">
+
+        <!-- ── LEFT PANE: PERSONAL INFO & RECENT BOOKINGS ── -->
+        <div class="column-left">
+
+          <!-- CARD 1: PERSONAL INFORMATION -->
+          <div class="standard-card">
+            <div class="card-header-row">
+              <div class="card-title-group">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                  <circle cx="12" cy="7" r="4"></circle>
+                </svg>
+                <h2>Personal Information</h2>
+              </div>
+              <button type="button" class="btn-card-action" id="toggleEditBtn" onclick="toggleEditMode()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                  <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                </svg>
+                <span id="editBtnText">Edit</span>
+              </button>
+            </div>
+
+            <form id="profileForm" onsubmit="handleFormSubmit(event)">
+              <div class="profile-form-grid">
+
+                <!-- Full Name -->
+                <div class="form-group">
+                  <label for="fullNameInput">Full Name</label>
+                  <div class="input-icon-wrap">
+                    <svg class="field-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+                    </svg>
+                    <input type="text" id="fullNameInput" name="name"
+                           th:value="${profileUser != null and profileUser.name != null and !#strings.isEmpty(profileUser.name) ? profileUser.name : (currentUser != null ? #strings.arraySplit(currentUser, '@')[0] : '')}"
+                           placeholder="Enter your full name" required>
+                  </div>
+                </div>
+
+                <!-- City -->
+                <div class="form-group">
+                  <label for="citySelect">City</label>
+                  <div class="input-icon-wrap">
+                    <svg class="field-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>
+                    </svg>
+                    <select id="citySelect" name="city">
+                      <option value="">Select City</option>
+                      <option value="Bangalore" th:selected="${profileUser != null and profileUser.city == 'Bangalore'}">Bangalore</option>
+                      <option value="Mumbai" th:selected="${profileUser != null and profileUser.city == 'Mumbai'}">Mumbai</option>
+                      <option value="Delhi" th:selected="${profileUser != null and profileUser.city == 'Delhi'}">Delhi</option>
+                      <option value="Hyderabad" th:selected="${profileUser != null and profileUser.city == 'Hyderabad'}">Hyderabad</option>
+                      <option value="Pune" th:selected="${profileUser != null and profileUser.city == 'Pune'}">Pune</option>
+                      <option value="Chennai" th:selected="${profileUser != null and profileUser.city == 'Chennai'}">Chennai</option>
+                    </select>
+                  </div>
+                </div>
+
+                <!-- Email Address -->
+                <div class="form-group">
+                  <label for="emailInput">Email Address</label>
+                  <div class="input-icon-wrap">
+                    <svg class="field-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                      <polyline points="22,6 12,13 2,6"/>
+                    </svg>
+                    <input type="email" id="emailInput" name="email"
+                           th:value="${profileUser != null ? profileUser.email : (currentUser != null ? currentUser : '')}"
+                           placeholder="Enter your email" readonly style="background:#f8fafc; cursor:default;">
+                  </div>
+                </div>
+
+                <!-- Preferred Area -->
+                <div class="form-group">
+                  <label for="areaSelect">Preferred Area</label>
+                  <div class="input-icon-wrap">
+                    <svg class="field-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>
+                    </svg>
+                    <select id="areaSelect" name="preferredArea">
+                      <option value="">Select Preferred Area</option>
+                      <option value="HSR Layout" th:selected="${profileUser != null and profileUser.preferredArea == 'HSR Layout'}">HSR Layout</option>
+                      <option value="Koramangala" th:selected="${profileUser != null and profileUser.preferredArea == 'Koramangala'}">Koramangala</option>
+                      <option value="Indiranagar" th:selected="${profileUser != null and profileUser.preferredArea == 'Indiranagar'}">Indiranagar</option>
+                      <option value="Whitefield" th:selected="${profileUser != null and profileUser.preferredArea == 'Whitefield'}">Whitefield</option>
+                      <option value="BTM Layout" th:selected="${profileUser != null and profileUser.preferredArea == 'BTM Layout'}">BTM Layout</option>
+                      <option value="Electronic City" th:selected="${profileUser != null and profileUser.preferredArea == 'Electronic City'}">Electronic City</option>
+                    </select>
+                  </div>
+                </div>
+
+                <!-- Phone Number -->
+                <div class="form-group">
+                  <label for="phoneInput">Phone Number</label>
+                  <div class="input-icon-wrap">
+                    <svg class="field-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+                    </svg>
+                    <input type="tel" id="phoneInput" name="phone"
+                           th:value="${profileUser != null ? profileUser.phone : ''}"
+                           placeholder="Enter phone number">
+                  </div>
+                </div>
+
+                <!-- About Me (Optional) -->
+                <div class="form-group">
+                  <label for="aboutMeInput">About Me <span style="color:#94a3b8;font-weight:500;">(Optional)</span></label>
+                  <div class="input-icon-wrap">
+                    <svg class="field-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/>
+                    </svg>
+                    <input type="text" id="aboutMeInput" name="aboutMe"
+                           th:value="${profileUser != null ? profileUser.aboutMe : ''}"
+                           placeholder="Write a short bio...">
+                  </div>
+                </div>
+
+              </div>
+
+              <!-- Save Changes Button -->
+              <button type="submit" class="btn-save-changes" id="btnSave">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                  <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                </svg>
+                <span>Save Changes</span>
+              </button>
+            </form>
+          </div>
+
+          <!-- CARD 2: DYNAMIC RECENT BOOKINGS -->
+          <div class="standard-card">
+            <div class="card-header-row">
+              <div class="card-title-group">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <polyline points="12 6 12 12 16 14"></polyline>
+                </svg>
+                <h2>Recent Bookings</h2>
+              </div>
+              <a th:href="@{/bookings}" class="stat-link" style="font-size:0.86rem;font-weight:700;">View All &rarr;</a>
+            </div>
+
+            <!-- Dynamic bookings container: renders server-side or via live client-side sync -->
+            <div class="bookings-list" id="recentBookingsContainer">
+              <!-- Thymeleaf server-side iteration fallback -->
+              <th:block th:if="${(userBookings != null and !#lists.isEmpty(userBookings)) or (bookings != null and !#lists.isEmpty(bookings))}">
+                <div class="booking-item-card"
+                     th:each="booking, iter : ${userBookings != null ? userBookings : bookings}"
+                     th:if="${iter.index < 4}">
+                  <div class="booking-left-part">
+                    <img th:src="${booking.pgImageUrl != null and !booking.pgImageUrl.isEmpty() ? booking.pgImageUrl : '/assets/pg-serene.jpg'}"
+                         th:alt="${booking.pgName}" class="booking-thumb"
+                         onerror="this.src='/assets/login_hero_bedroom.jpg'">
+                    <div class="booking-info">
+                      <h3 class="booking-title" th:text="${booking.pgName}">PG Name</h3>
+                      <div class="booking-location">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:13px;height:13px;color:#ef4444;"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                        <span th:text="${booking.pgLocation}">Location</span>
+                      </div>
+                      <div class="booking-meta-row">
+                        <span class="booking-meta-item">
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;color:#94a3b8;"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                          <span th:text="${booking.roomType != null ? booking.roomType : 'Standard'}">Sharing</span>
+                        </span>
+                        <span class="booking-meta-item">
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;color:#94a3b8;"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                          <span th:text="${booking.bookingDate}">Date</span>
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="booking-right-part">
+                    <span th:class="'badge-status ' + ${#strings.toLowerCase(booking.status)}"
+                          th:text="${booking.status}">CONFIRMED</span>
+                    <a th:href="@{/bookings}" class="btn-view-details">View Details</a>
+                  </div>
+                </div>
+              </th:block>
+
+              <!-- Empty state fallback if no bookings rendered by server -->
+              <div class="empty-bookings-box" id="emptyBookingsMsg"
+                   th:if="${(userBookings == null or #lists.isEmpty(userBookings)) and (bookings == null or #lists.isEmpty(bookings))}">
+                <p>Loading your recent bookings...</p>
+                <a th:href="@{/pgs}" class="btn-card-action">Browse PGs Now &rarr;</a>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- ── RIGHT PANE: PROFILE COMPLETION & QUICK LINKS ── -->
+        <div class="column-right">
+
+          <!-- CARD 1: DYNAMIC PROFILE COMPLETION -->
+          <div class="standard-card">
+            <div class="completion-header">
+              <svg viewBox="0 0 24 24" fill="currentColor">
+                <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+              </svg>
+              <span>Profile Completion</span>
+            </div>
+
+            <div class="radial-progress-box">
+              <div class="circular-chart">
+                <svg viewBox="0 0 36 36">
+                  <path class="circle-bg"
+                        d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
+                  <path class="circle-progress" id="progressStroke"
+                        d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
+                </svg>
+                <div class="circle-percent-text" id="progressPctText">75%</div>
+              </div>
+              <div class="progress-desc">
+                <h4 id="progressHeadline">Almost there!</h4>
+                <p id="progressSubtitle">Complete your profile to get better recommendations.</p>
+              </div>
+            </div>
+
+            <!-- Checklist -->
+            <ul class="completion-checklist">
+              <li class="checklist-item" id="chkBasic">
+                <span class="check-icon-circle" id="chkBasicIcon"></span>
+                <span>Basic Information</span>
+              </li>
+              <li class="checklist-item" id="chkPhone">
+                <span class="check-icon-circle" id="chkPhoneIcon"></span>
+                <span>Phone Number</span>
+              </li>
+              <li class="checklist-item" id="chkArea">
+                <span class="check-icon-circle" id="chkAreaIcon"></span>
+                <span>Preferred Area</span>
+              </li>
+              <li class="checklist-item" id="chkAbout">
+                <span class="check-icon-circle" id="chkAboutIcon"></span>
+                <span>Add About Me</span>
+              </li>
+            </ul>
+          </div>
+
+          <!-- CARD 2: QUICK LINKS -->
+          <div class="standard-card">
+            <div class="completion-header">
+              <svg viewBox="0 0 24 24" fill="currentColor">
+                <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+              </svg>
+              <span>Quick Links</span>
+            </div>
+
+            <div class="quick-links-group">
+              <!-- Find PG -->
+              <a th:href="@{/pgs}" class="quick-link-tile">
+                <div class="ql-tile-left">
+                  <div class="ql-icon-round blue">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                      <circle cx="11" cy="11" r="8"></circle>
+                      <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                  </div>
+                  <div class="ql-text-block">
+                    <h5>Find PG</h5>
+                    <p>Explore new PG options</p>
+                  </div>
+                </div>
+                <span class="ql-chevron">&rsaquo;</span>
+              </a>
+
+              <!-- My Bookings -->
+              <a th:href="@{/bookings}" class="quick-link-tile">
+                <div class="ql-tile-left">
+                  <div class="ql-icon-round blue">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                      <line x1="16" y1="2" x2="16" y2="6"></line>
+                      <line x1="8" y1="2" x2="8" y2="6"></line>
+                      <line x1="3" y1="10" x2="21" y2="10"></line>
+                    </svg>
+                  </div>
+                  <div class="ql-text-block">
+                    <h5>My Bookings</h5>
+                    <p>View and manage bookings</p>
+                  </div>
+                </div>
+                <span class="ql-chevron">&rsaquo;</span>
+              </a>
+
+              <!-- Favorites -->
+              <a th:href="@{/favorites}" class="quick-link-tile">
+                <div class="ql-tile-left">
+                  <div class="ql-icon-round pink">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"></path>
+                    </svg>
+                  </div>
+                  <div class="ql-text-block">
+                    <h5>Favorites</h5>
+                    <p>View your saved PGs</p>
+                  </div>
+                </div>
+                <span class="ql-chevron">&rsaquo;</span>
+              </a>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+  </div>
+
+</main>
+
+<!-- TOAST FEEDBACK NOTIFICATION -->
+<div id="toastMessage">
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+    <polyline points="22 4 12 14.01 9 11.01"></polyline>
+  </svg>
+  <span id="toastText">Profile updated successfully! ✨</span>
+</div>
+
+<!-- CLIENT JAVASCRIPT FOR DYNAMIC DATA, PERSISTENCE & LIVE BOOKING SYNC -->
+<script>
+  // Get storage key scoped to current user email
+  function getStorageKey() {
+    const emailEl = document.getElementById('emailInput');
+    const email = emailEl ? emailEl.value.trim() : 'default';
+    return 'staynest_profile_' + (email || 'user');
+  }
+
+  // Live Bookings Fetcher: queries /bookings dynamically and renders the latest bookings
+  async function syncLiveBookings() {
+    try {
+      const res = await fetch('/bookings');
+      if (!res.ok) return;
+      const htmlText = await res.text();
+      const doc = new DOMParser().parseFromString(htmlText, 'text/html');
+      const cards = doc.querySelectorAll('.booking-card');
+
+      if (!cards || cards.length === 0) {
+        const container = document.getElementById('recentBookingsContainer');
+        if (container) {
+          container.innerHTML = `
+            <div class="empty-bookings-box">
+              <p>You haven't made any bookings yet.</p>
+              <a href="/pgs" class="btn-card-action">Browse PGs Now &rarr;</a>
+            </div>
+          `;
+        }
+        return;
+      }
+
+      let total = cards.length;
+      let confirmed = 0;
+      let cancelled = 0;
+      const bookingsData = [];
+
+      cards.forEach((card, idx) => {
+        const rawStatus = (card.getAttribute('data-status') || '').toUpperCase();
+        if (rawStatus === 'CONFIRMED' || rawStatus === 'COMPLETED') confirmed++;
+        if (rawStatus === 'CANCELLED') cancelled++;
+
+        if (idx < 4) {
+          const imgEl = card.querySelector('.card-photo img');
+          const imgSrc = imgEl ? (imgEl.getAttribute('src') || '/assets/pg-serene.jpg') : '/assets/pg-serene.jpg';
+          const titleEl = card.querySelector('.pg-title');
+          const title = titleEl ? titleEl.textContent.trim() : 'StayNest PG';
+          const locEl = card.querySelector('.pg-location');
+          const loc = locEl ? locEl.textContent.replace('📍', '').trim() : 'Bangalore';
+
+          const chips = card.querySelectorAll('.info-chip');
+          let roomType = 'Double Sharing';
+          let date = card.getAttribute('data-date') || '';
+          if (chips.length > 0) {
+            const chipVal = chips[0].querySelector('.chip-val');
+            if (chipVal) roomType = chipVal.textContent.trim();
+          }
+          if (chips.length > 1) {
+            const dateVal = chips[1].querySelector('.chip-val');
+            if (dateVal) date = dateVal.textContent.trim();
+          }
+
+          bookingsData.push({
+            title,
+            imgSrc,
+            loc,
+            roomType,
+            date,
+            status: rawStatus || 'CONFIRMED'
+          });
+        }
+      });
+
+      // Update stat cards dynamically
+      const totalEl = document.getElementById('statTotalBookings');
+      if (totalEl) totalEl.textContent = total;
+      const confEl = document.getElementById('statConfirmedBookings');
+      if (confEl) confEl.textContent = confirmed;
+      const cancEl = document.getElementById('statCancelledBookings');
+      if (cancEl) cancEl.textContent = cancelled;
+
+      // Update Recent Bookings list
+      const container = document.getElementById('recentBookingsContainer');
+      if (container && bookingsData.length > 0) {
+        container.innerHTML = bookingsData.map(b => `
+          <div class="booking-item-card">
+            <div class="booking-left-part">
+              <img src="${b.imgSrc}" alt="${b.title}" class="booking-thumb" onerror="this.src='/assets/login_hero_bedroom.jpg'">
+              <div class="booking-info">
+                <h3 class="booking-title">${b.title}</h3>
+                <div class="booking-location">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:13px;height:13px;color:#ef4444;"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                  <span>${b.loc}</span>
+                </div>
+                <div class="booking-meta-row">
+                  <span class="booking-meta-item">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;color:#94a3b8;"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                    <span>${b.roomType}</span>
+                  </span>
+                  <span class="booking-meta-item">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;color:#94a3b8;"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                    <span>${b.date}</span>
+                  </span>
+                </div>
+              </div>
+            </div>
+            <div class="booking-right-part">
+              <span class="badge-status ${b.status.toLowerCase()}">${b.status}</span>
+              <a href="/bookings" class="btn-view-details">View Details</a>
+            </div>
+          </div>
+        `).join('');
+      }
+    } catch(err) {
+      console.log('Live bookings note:', err);
+    }
+  }
+
+  // Load saved profile data & sync bookings on page load
+  document.addEventListener('DOMContentLoaded', () => {
+    try {
+      const userKey = getStorageKey();
+      const savedData = localStorage.getItem(userKey);
+      if (savedData) {
+        const data = JSON.parse(savedData);
+        if (data.name) {
+          document.getElementById('fullNameInput').value = data.name;
+          updateNameDisplays(data.name);
+        }
+        if (data.city) document.getElementById('citySelect').value = data.city;
+        if (data.preferredArea) document.getElementById('areaSelect').value = data.preferredArea;
+        if (data.phone) document.getElementById('phoneInput').value = data.phone;
+        if (data.aboutMe) document.getElementById('aboutMeInput').value = data.aboutMe;
+      }
+
+      // Load favorites count if available
+      const favs = localStorage.getItem('staynest_favorites');
+      if (favs) {
+        try {
+          const favList = JSON.parse(favs);
+          if (Array.isArray(favList)) {
+            const favCountEl = document.getElementById('statFavorites');
+            if (favCountEl) favCountEl.textContent = favList.length;
+          }
+        } catch(e) {}
+      }
+
+      // Load custom avatar if previously uploaded
+      const savedAvatar = localStorage.getItem('staynest_avatar_' + userKey);
+      if (savedAvatar) {
+        applyAvatarImage(savedAvatar);
+      }
+
+      // Recalculate profile completion checklist
+      recalculateCompletion();
+
+      // Trigger automatic live sync of bookings from server
+      syncLiveBookings();
+    } catch (e) {
+      console.error(e);
+    }
+  });
+
+  function updateNameDisplays(name) {
+    if (!name) return;
+    const trimmed = name.trim();
+    const sidebar = document.getElementById('sidebarUserName');
+    if (sidebar) sidebar.textContent = trimmed;
+    
+    const hero = document.getElementById('heroUserName');
+    if (hero) hero.textContent = trimmed.split(' ')[0] || trimmed;
+
+    const initial = trimmed.charAt(0).toUpperCase();
+    if (initial) {
+      const avatarEl = document.getElementById('avatarDisplay');
+      if (avatarEl && !avatarEl.style.backgroundImage) {
+        avatarEl.textContent = initial;
+      }
+      const navInit = document.getElementById('navAvatarInitial');
+      if (navInit) navInit.textContent = initial;
+    }
+  }
+
+  // Toggle edit focus
+  function toggleEditMode() {
+    const input = document.getElementById('fullNameInput');
+    input.focus();
+    input.select();
+    showToast('Editing enabled. Modify your details and click Save Changes.');
+  }
+
+  // Handle Form Submission
+  function handleFormSubmit(e) {
+    if (e && e.preventDefault) {
+      e.preventDefault();
+    }
+
+    const name = document.getElementById('fullNameInput').value.trim();
+    const city = document.getElementById('citySelect').value;
+    const preferredArea = document.getElementById('areaSelect').value;
+    const phone = document.getElementById('phoneInput').value.trim();
+    const aboutMe = document.getElementById('aboutMeInput').value.trim();
+
+    // 1. Persist to local storage for immediate dynamic update
+    const userKey = getStorageKey();
+    const profileData = { name, city, preferredArea, phone, aboutMe };
+    localStorage.setItem(userKey, JSON.stringify(profileData));
+
+    // 2. Update frontend displays instantly
+    updateNameDisplays(name);
+
+    // 3. Recalculate completion percentage
+    recalculateCompletion();
+
+    // 4. Send background update to backend if available
+    try {
+      const formData = new URLSearchParams();
+      formData.append('name', name);
+      formData.append('city', city);
+      formData.append('preferredArea', preferredArea);
+      formData.append('phone', phone);
+      formData.append('aboutMe', aboutMe);
+
+      fetch('/profile/update', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: formData.toString()
+      }).catch(err => {
+        console.log('Backend sync note:', err);
+      });
+    } catch(err) {
+      console.log('Fetch skipped');
+    }
+
+    showToast('Profile updated successfully! ✨');
+    return false;
+  }
+
+  // Recalculate profile completion checklist & percentage dynamically
+  function recalculateCompletion() {
+    const name = document.getElementById('fullNameInput') ? document.getElementById('fullNameInput').value.trim() : '';
+    const phone = document.getElementById('phoneInput') ? document.getElementById('phoneInput').value.trim() : '';
+    const area = document.getElementById('areaSelect') ? document.getElementById('areaSelect').value.trim() : '';
+    const aboutMe = document.getElementById('aboutMeInput') ? document.getElementById('aboutMeInput').value.trim() : '';
+
+    let completed = 0;
+    const total = 4;
+
+    // 1. Basic Info
+    const isBasicDone = !!name;
+    setChecklistItem('chkBasic', 'chkBasicIcon', isBasicDone);
+    if (isBasicDone) completed++;
+
+    // 2. Phone
+    const isPhoneDone = phone.length >= 8;
+    setChecklistItem('chkPhone', 'chkPhoneIcon', isPhoneDone);
+    if (isPhoneDone) completed++;
+
+    // 3. Preferred Area
+    const isAreaDone = !!area;
+    setChecklistItem('chkArea', 'chkAreaIcon', isAreaDone);
+    if (isAreaDone) completed++;
+
+    // 4. About Me
+    const isAboutDone = aboutMe.length >= 5;
+    setChecklistItem('chkAbout', 'chkAboutIcon', isAboutDone);
+    if (isAboutDone) completed++;
+
+    const pct = Math.round((completed / total) * 100);
+    const pctText = document.getElementById('progressPctText');
+    const stroke = document.getElementById('progressStroke');
+    const headline = document.getElementById('progressHeadline');
+    const subtitle = document.getElementById('progressSubtitle');
+
+    if (pctText) pctText.textContent = pct + '%';
+    if (stroke) {
+      const offset = 100 - pct;
+      stroke.style.strokeDashoffset = offset;
+    }
+
+    if (headline && subtitle) {
+      if (pct === 100) {
+        headline.textContent = 'All complete!';
+        subtitle.textContent = 'Great job! Your profile is 100% complete.';
+      } else if (pct >= 75) {
+        headline.textContent = 'Almost there!';
+        subtitle.textContent = 'Complete your profile to get better recommendations.';
+      } else {
+        headline.textContent = 'Keep going!';
+        subtitle.textContent = 'Fill in more details to get personalized PG matches.';
+      }
+    }
+  }
+
+  function setChecklistItem(itemId, iconId, isDone) {
+    const item = document.getElementById(itemId);
+    const icon = document.getElementById(iconId);
+    if (!item || !icon) return;
+
+    if (isDone) {
+      item.className = 'checklist-item done';
+      icon.className = 'check-icon-circle done';
+      icon.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="width:12px;height:12px;"><polyline points="20 6 9 17 4 12"></polyline></svg>`;
+    } else {
+      item.className = 'checklist-item pending';
+      icon.className = 'check-icon-circle pending';
+      icon.innerHTML = '';
+    }
+  }
+
+  function applyAvatarImage(dataUrl) {
+    const avatarEl = document.getElementById('avatarDisplay');
+    if (avatarEl) {
+      avatarEl.style.backgroundImage = `url(${dataUrl})`;
+      avatarEl.textContent = '';
+    }
+  }
+
+  // Handle avatar photo upload
+  function handleAvatarChange(event) {
+    const file = event.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const dataUrl = e.target.result;
+        applyAvatarImage(dataUrl);
+        const userKey = getStorageKey();
+        localStorage.setItem('staynest_avatar_' + userKey, dataUrl);
+        showToast('Profile photo updated successfully!');
+      };
+      reader.readAsDataURL(file);
+    }
+  }
+
+  // Toast helper
+  function showToast(message) {
+    const toast = document.getElementById('toastMessage');
+    const text = document.getElementById('toastText');
+    if (toast && text) {
+      text.textContent = message;
+      toast.classList.add('show');
+      setTimeout(() => {
+        toast.classList.remove('show');
+      }, 3500);
+    }
+  }
+</script>
+
+</body>
+</html>
