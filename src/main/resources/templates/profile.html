@@ -2,7 +2,7 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
   <title>User Profile | StayNest</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -35,13 +35,15 @@
     }
 
     body {
-      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
       background: var(--bg-page);
       color: var(--text-dark);
       min-height: 100vh;
       display: flex;
       flex-direction: column;
       line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
     }
 
     /* ── STICKY TOP NAVBAR ── */
@@ -69,7 +71,7 @@
       text-decoration: none;
     }
     .brand-logo img {
-      height: 44px;
+      height: 42px;
       width: auto;
       border-radius: 8px;
       background: #ffffff;
@@ -77,7 +79,7 @@
       display: block;
     }
 
-    /* Nav Links */
+    /* Center Nav Links (Desktop) */
     nav.nav-links {
       display: flex;
       align-items: center;
@@ -111,12 +113,12 @@
       border-radius: 3px 3px 0 0;
     }
 
-    /* Nav Actions */
+    /* Right Header Elements */
     .header-right {
       display: flex;
       align-items: center;
       justify-content: flex-end;
-      gap: 18px;
+      gap: 14px;
     }
     .btn-notification {
       position: relative;
@@ -144,6 +146,23 @@
       background: #ef4444;
       border-radius: 50%;
       border: 2px solid #0b1329;
+    }
+
+    /* Mobile Hamburger Button */
+    .btn-mobile-toggle {
+      display: none;
+      background: none;
+      border: none;
+      color: #ffffff;
+      padding: 6px;
+      cursor: pointer;
+      border-radius: 8px;
+      margin-left: 6px;
+    }
+    .btn-mobile-toggle svg {
+      width: 24px;
+      height: 24px;
+      display: block;
     }
 
     /* Profile Button Dropdown */
@@ -241,7 +260,33 @@
       color: #f87171 !important;
     }
 
-    /* ── EXPANDED PAGE WRAPPER (1400px Width) ── */
+    /* Mobile Dropdown Nav Drawer */
+    .mobile-nav-drawer {
+      display: none;
+      background: #0b1329;
+      border-top: 1px solid rgba(255,255,255,0.08);
+      padding: 12px 20px 18px;
+    }
+    .mobile-nav-drawer.open {
+      display: block;
+    }
+    .mobile-nav-drawer a {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 0;
+      color: #cbd5e1;
+      text-decoration: none;
+      font-size: 0.95rem;
+      font-weight: 600;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+    .mobile-nav-drawer a.active {
+      color: #3b82f6;
+      font-weight: 700;
+    }
+
+    /* ── PAGE WRAPPER ── */
     .page-wrap {
       max-width: 1400px;
       width: 95%;
@@ -254,7 +299,7 @@
     .hero-banner {
       background: linear-gradient(105deg, #dbeafe 0%, #eff6ff 48%, #e0f2fe 100%);
       border-radius: 20px;
-      padding: 30px 44px;
+      padding: 28px 40px;
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -265,7 +310,7 @@
       border: 1px solid rgba(191,219,254,0.5);
     }
     .hero-text h1 {
-      font-size: 2.15rem;
+      font-size: 2.1rem;
       font-weight: 800;
       color: #0f172a;
       letter-spacing: -0.6px;
@@ -280,17 +325,17 @@
       transform-origin: 70% 70%;
     }
     @keyframes waveHand {
-      0% { transform: rotate( 0.0deg) }
+      0% { transform: rotate(0.0deg) }
       10% { transform: rotate(14.0deg) }
       20% { transform: rotate(-8.0deg) }
       30% { transform: rotate(14.0deg) }
       40% { transform: rotate(-4.0deg) }
       50% { transform: rotate(10.0deg) }
-      60% { transform: rotate( 0.0deg) }
-      100% { transform: rotate( 0.0deg) }
+      60% { transform: rotate(0.0deg) }
+      100% { transform: rotate(0.0deg) }
     }
     .hero-text p {
-      font-size: 1.02rem;
+      font-size: 1rem;
       color: #64748b;
       font-weight: 500;
     }
@@ -301,7 +346,7 @@
       position: relative;
     }
     .hero-visual img {
-      max-height: 140px;
+      max-height: 135px;
       width: auto;
       object-fit: contain;
       mix-blend-mode: multiply;
@@ -321,7 +366,7 @@
     .sidebar-card {
       background: var(--card-bg);
       border-radius: var(--card-radius);
-      padding: 32px 20px 24px;
+      padding: 30px 20px 24px;
       box-shadow: var(--shadow-sm);
       border: 1px solid var(--border-light);
       text-align: center;
@@ -330,20 +375,20 @@
     }
     .avatar-wrapper {
       position: relative;
-      width: 106px;
-      height: 106px;
+      width: 100px;
+      height: 100px;
       margin: 0 auto 16px;
     }
     .avatar-circle-lg {
-      width: 106px;
-      height: 106px;
+      width: 100px;
+      height: 100px;
       border-radius: 50%;
       background: linear-gradient(135deg, #3b82f6, #4f46e5);
       color: #ffffff;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 2.85rem;
+      font-size: 2.7rem;
       font-weight: 800;
       box-shadow: 0 8px 24px rgba(37,99,235,0.22);
       border: 3px solid #ffffff;
@@ -355,8 +400,8 @@
       position: absolute;
       right: 0;
       bottom: 2px;
-      width: 34px;
-      height: 34px;
+      width: 32px;
+      height: 32px;
       border-radius: 50%;
       background: #ffffff;
       border: 2px solid #ffffff;
@@ -375,16 +420,16 @@
     }
 
     .user-fullname {
-      font-size: 1.28rem;
+      font-size: 1.25rem;
       font-weight: 800;
       color: var(--text-dark);
       margin-bottom: 4px;
       letter-spacing: -0.3px;
     }
     .user-email-text {
-      font-size: 0.88rem;
+      font-size: 0.86rem;
       color: var(--text-muted);
-      margin-bottom: 14px;
+      margin-bottom: 12px;
       word-break: break-all;
     }
     .pill-active-member {
@@ -393,11 +438,11 @@
       gap: 6px;
       background: #dcfce7;
       color: #15803d;
-      font-size: 0.78rem;
+      font-size: 0.76rem;
       font-weight: 700;
       padding: 4px 14px;
       border-radius: 9999px;
-      margin-bottom: 22px;
+      margin-bottom: 20px;
     }
     .pill-active-member::before {
       content: '';
@@ -419,11 +464,11 @@
       display: flex;
       align-items: center;
       gap: 12px;
-      padding: 11px 16px;
+      padding: 10px 14px;
       border-radius: 10px;
       text-decoration: none;
       color: var(--text-sub);
-      font-size: 0.92rem;
+      font-size: 0.9rem;
       font-weight: 600;
       transition: all .15s;
     }
@@ -448,15 +493,15 @@
       border-radius: 0 4px 4px 0;
     }
     .sidebar-nav-item svg {
-      width: 20px;
-      height: 20px;
+      width: 19px;
+      height: 19px;
       flex-shrink: 0;
       color: currentColor;
     }
     .sidebar-divider {
       height: 1px;
       background: #f1f5f9;
-      margin: 10px 0;
+      margin: 8px 0;
     }
     .sidebar-nav-item.logout {
       color: var(--danger-red);
@@ -466,11 +511,12 @@
       color: #dc2626;
     }
 
-    /* ── RIGHT MAIN CONTENT AREA ── */
+    /* ── RIGHT MAIN CONTENT FLOW ── */
     .main-content-flow {
       display: flex;
       flex-direction: column;
       gap: 22px;
+      min-width: 0;
     }
 
     /* ── 4 STAT CARDS ROW ── */
@@ -483,21 +529,22 @@
       background: var(--card-bg);
       border-radius: 16px;
       border: 1px solid var(--border-light);
-      padding: 18px 20px;
+      padding: 16px 18px;
       box-shadow: var(--shadow-sm);
       display: flex;
       align-items: center;
-      gap: 16px;
+      gap: 14px;
       text-decoration: none;
       transition: transform .2s, box-shadow .2s;
+      min-width: 0;
     }
     .stat-card:hover {
       transform: translateY(-2px);
       box-shadow: var(--shadow-md);
     }
     .stat-icon-box {
-      width: 46px;
-      height: 46px;
+      width: 44px;
+      height: 44px;
       border-radius: 12px;
       display: flex;
       align-items: center;
@@ -526,20 +573,23 @@
       min-width: 0;
     }
     .stat-number {
-      font-size: 1.45rem;
+      font-size: 1.4rem;
       font-weight: 800;
       color: var(--text-dark);
       line-height: 1.1;
       margin-bottom: 2px;
     }
     .stat-label {
-      font-size: 0.82rem;
+      font-size: 0.8rem;
       color: var(--text-muted);
       font-weight: 600;
-      margin-bottom: 4px;
+      margin-bottom: 3px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
     .stat-link {
-      font-size: 0.78rem;
+      font-size: 0.76rem;
       font-weight: 700;
       color: var(--primary);
       display: inline-flex;
@@ -552,7 +602,7 @@
       gap: 7px;
     }
 
-    /* ── TWO-COLUMN SPLIT (MIDDLE FORM & RIGHT WIDGETS) ── */
+    /* ── TWO-COLUMN SPLIT (FORM & WIDGETS) ── */
     .content-columns {
       display: grid;
       grid-template-columns: minmax(0, 1.85fr) minmax(0, 1.15fr);
@@ -564,11 +614,13 @@
       display: flex;
       flex-direction: column;
       gap: 22px;
+      min-width: 0;
     }
     .column-right {
       display: flex;
       flex-direction: column;
       gap: 22px;
+      min-width: 0;
     }
 
     /* Standard Card Container */
@@ -576,8 +628,9 @@
       background: var(--card-bg);
       border-radius: var(--card-radius);
       border: 1px solid var(--border-light);
-      padding: 26px 28px;
+      padding: 24px 26px;
       box-shadow: var(--shadow-sm);
+      overflow: hidden;
     }
 
     .card-header-row {
@@ -585,6 +638,8 @@
       align-items: center;
       justify-content: space-between;
       margin-bottom: 20px;
+      flex-wrap: wrap;
+      gap: 10px;
     }
     .card-title-group {
       display: flex;
@@ -595,9 +650,10 @@
       width: 22px;
       height: 22px;
       color: var(--primary);
+      flex-shrink: 0;
     }
     .card-title-group h2 {
-      font-size: 1.22rem;
+      font-size: 1.2rem;
       font-weight: 800;
       color: var(--text-dark);
       letter-spacing: -0.3px;
@@ -631,7 +687,7 @@
     .profile-form-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 18px 22px;
+      gap: 18px 20px;
     }
     .form-group {
       display: flex;
@@ -663,7 +719,7 @@
       padding: 0 14px 0 42px;
       border: 1.5px solid var(--border-color);
       border-radius: 10px;
-      font-size: 0.92rem;
+      font-size: 16px; /* 16px prevents mobile auto-zoom */
       color: #1e293b;
       font-family: inherit;
       font-weight: 500;
@@ -721,7 +777,7 @@
       height: 17px;
     }
 
-    /* ── RECENT BOOKINGS CARD ── */
+    /* ── RECENT BOOKINGS SECTION ── */
     .bookings-list {
       display: flex;
       flex-direction: column;
@@ -745,12 +801,13 @@
     .booking-left-part {
       display: flex;
       align-items: center;
-      gap: 16px;
+      gap: 14px;
       min-width: 0;
+      flex: 1;
     }
     .booking-thumb {
-      width: 84px;
-      height: 64px;
+      width: 82px;
+      height: 62px;
       border-radius: 10px;
       object-fit: cover;
       flex-shrink: 0;
@@ -760,23 +817,27 @@
       display: flex;
       flex-direction: column;
       min-width: 0;
+      flex: 1;
     }
     .booking-title {
-      font-size: 1rem;
+      font-size: 0.98rem;
       font-weight: 800;
       color: var(--text-dark);
-      margin-bottom: 3px;
+      margin-bottom: 2px;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
     }
     .booking-location {
-      font-size: 0.82rem;
+      font-size: 0.8rem;
       color: var(--text-muted);
       display: flex;
       align-items: center;
       gap: 4px;
       margin-bottom: 4px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
     .booking-location svg {
       width: 13px;
@@ -788,9 +849,10 @@
       display: flex;
       align-items: center;
       gap: 12px;
-      font-size: 0.78rem;
+      font-size: 0.76rem;
       color: #64748b;
       font-weight: 600;
+      flex-wrap: wrap;
     }
     .booking-meta-item {
       display: flex;
@@ -806,16 +868,17 @@
     .booking-right-part {
       display: flex;
       align-items: center;
-      gap: 14px;
+      gap: 12px;
       flex-shrink: 0;
     }
     .badge-status {
-      font-size: 0.74rem;
+      font-size: 0.72rem;
       font-weight: 800;
       letter-spacing: 0.5px;
       padding: 5px 12px;
       border-radius: 9999px;
       text-transform: uppercase;
+      white-space: nowrap;
     }
     .badge-status.confirmed, .badge-status.completed {
       background: var(--success-bg);
@@ -829,7 +892,7 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      padding: 7px 16px;
+      padding: 7px 15px;
       border-radius: 8px;
       font-size: 0.82rem;
       font-weight: 700;
@@ -838,6 +901,7 @@
       background: transparent;
       text-decoration: none;
       transition: all .2s;
+      white-space: nowrap;
     }
     .btn-view-details:hover {
       background: var(--primary);
@@ -846,14 +910,14 @@
 
     .empty-bookings-box {
       text-align: center;
-      padding: 30px 20px;
+      padding: 28px 16px;
       background: #f8fafc;
       border-radius: 12px;
       border: 1.5px dashed var(--border-color);
     }
     .empty-bookings-box p {
       color: var(--text-muted);
-      font-size: 0.92rem;
+      font-size: 0.9rem;
       margin-bottom: 12px;
       font-weight: 500;
     }
@@ -872,20 +936,21 @@
       color: var(--amber-accent);
       width: 20px;
       height: 20px;
+      flex-shrink: 0;
     }
 
     .radial-progress-box {
       display: flex;
       align-items: center;
       gap: 18px;
-      margin-bottom: 20px;
-      padding-bottom: 18px;
+      margin-bottom: 18px;
+      padding-bottom: 16px;
       border-bottom: 1px solid var(--border-light);
     }
     .circular-chart {
       position: relative;
-      width: 72px;
-      height: 72px;
+      width: 68px;
+      height: 68px;
       flex-shrink: 0;
     }
     .circular-chart svg {
@@ -904,7 +969,7 @@
       stroke-width: 3.5;
       stroke-linecap: round;
       stroke-dasharray: 100, 100;
-      stroke-dashoffset: 25; /* dynamic */
+      stroke-dashoffset: 25;
       transition: stroke-dashoffset 0.8s ease-out;
     }
     .circle-percent-text {
@@ -912,18 +977,18 @@
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
-      font-size: 0.98rem;
+      font-size: 0.96rem;
       font-weight: 800;
       color: var(--text-dark);
     }
     .progress-desc h4 {
-      font-size: 0.98rem;
+      font-size: 0.96rem;
       font-weight: 800;
       color: var(--text-dark);
       margin-bottom: 3px;
     }
     .progress-desc p {
-      font-size: 0.81rem;
+      font-size: 0.8rem;
       color: var(--text-muted);
       line-height: 1.35;
     }
@@ -938,7 +1003,7 @@
       display: flex;
       align-items: center;
       gap: 10px;
-      font-size: 0.86rem;
+      font-size: 0.84rem;
       font-weight: 600;
       color: #334155;
     }
@@ -980,7 +1045,7 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 13px 16px;
+      padding: 12px 14px;
       background: #f8fafc;
       border: 1px solid var(--border-light);
       border-radius: 14px;
@@ -996,10 +1061,11 @@
       display: flex;
       align-items: center;
       gap: 12px;
+      min-width: 0;
     }
     .ql-icon-round {
-      width: 38px;
-      height: 38px;
+      width: 36px;
+      height: 36px;
       border-radius: 50%;
       display: flex;
       align-items: center;
@@ -1015,13 +1081,13 @@
       color: #ec4899;
     }
     .ql-text-block h5 {
-      font-size: 0.9rem;
+      font-size: 0.88rem;
       font-weight: 700;
       color: var(--text-dark);
       margin-bottom: 2px;
     }
     .ql-text-block p {
-      font-size: 0.76rem;
+      font-size: 0.75rem;
       color: var(--text-muted);
     }
     .ql-chevron {
@@ -1038,17 +1104,18 @@
     /* Toast Notification */
     #toastMessage {
       position: fixed;
-      bottom: 28px;
-      right: 28px;
+      bottom: 24px;
+      right: 24px;
+      left: auto;
       background: #0f172a;
       color: #ffffff;
-      padding: 14px 22px;
+      padding: 12px 20px;
       border-radius: 12px;
       box-shadow: 0 10px 30px rgba(0,0,0,0.25);
       display: flex;
       align-items: center;
       gap: 10px;
-      font-size: 0.9rem;
+      font-size: 0.88rem;
       font-weight: 600;
       z-index: 1000;
       opacity: 0;
@@ -1062,7 +1129,11 @@
       pointer-events: auto;
     }
 
-    /* Responsive adjustments */
+    /* ══════════════════════════════════════════════════════════════
+       📱 ULTRA-POLISHED MOBILE RESPONSIVE MEDIA QUERIES
+       ══════════════════════════════════════════════════════════════ */
+
+    /* Tablet & Medium Screens (< 1120px) */
     @media (max-width: 1120px) {
       .stats-grid {
         grid-template-columns: repeat(2, 1fr);
@@ -1072,30 +1143,191 @@
       }
     }
 
+    /* Small Tablets & Large Phones (< 860px) */
     @media (max-width: 860px) {
-      .profile-layout {
-        grid-template-columns: 1fr;
-      }
-      .sidebar-card {
-        position: static;
-      }
       .header-inner {
-        grid-template-columns: auto 1fr;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        height: 60px;
+        padding: 0 16px;
       }
       nav.nav-links {
         display: none;
       }
+      .btn-mobile-toggle {
+        display: inline-flex;
+      }
+
+      .page-wrap {
+        width: 100%;
+        padding: 16px 14px 48px;
+      }
+
       .hero-banner {
         flex-direction: column;
         align-items: flex-start;
-        padding: 24px 20px;
-        gap: 16px;
+        padding: 22px 20px;
+        gap: 14px;
+        border-radius: 16px;
+        margin-bottom: 18px;
+      }
+      .hero-text h1 {
+        font-size: 1.65rem;
+      }
+      .hero-text p {
+        font-size: 0.92rem;
       }
       .hero-visual {
-        align-self: flex-end;
+        display: none; /* Hide heavy room graphic on mobile for clean breathing room */
       }
+
+      .profile-layout {
+        grid-template-columns: 1fr;
+        gap: 18px;
+      }
+      .sidebar-card {
+        position: static;
+        padding: 24px 16px 20px;
+        border-radius: 16px;
+      }
+      .avatar-wrapper {
+        width: 88px;
+        height: 88px;
+        margin-bottom: 12px;
+      }
+      .avatar-circle-lg {
+        width: 88px;
+        height: 88px;
+        font-size: 2.3rem;
+      }
+      .sidebar-nav {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+      }
+      .sidebar-divider {
+        grid-column: 1 / -1;
+        margin: 6px 0;
+      }
+      .sidebar-nav-item.logout {
+        grid-column: 1 / -1;
+      }
+    }
+
+    /* Standard Mobile Phones (< 640px) */
+    @media (max-width: 640px) {
+      .page-wrap {
+        padding: 12px 10px 40px;
+      }
+
+      .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+      }
+      .stat-card {
+        padding: 12px 14px;
+        gap: 10px;
+        border-radius: 14px;
+      }
+      .stat-icon-box {
+        width: 38px;
+        height: 38px;
+        border-radius: 10px;
+      }
+      .stat-number {
+        font-size: 1.25rem;
+      }
+      .stat-label {
+        font-size: 0.74rem;
+      }
+      .stat-link {
+        font-size: 0.72rem;
+      }
+
+      .standard-card {
+        padding: 18px 14px;
+        border-radius: 14px;
+      }
+      .card-header-row {
+        margin-bottom: 16px;
+      }
+      .card-title-group h2 {
+        font-size: 1.1rem;
+      }
+
       .profile-form-grid {
         grid-template-columns: 1fr;
+        gap: 14px;
+      }
+      .btn-save-changes {
+        width: 100%;
+        justify-content: center;
+        padding: 13px 20px;
+        font-size: 0.95rem;
+      }
+
+      /* Stack Recent Bookings for Perfect Mobile Layout (Prevents Overflow!) */
+      .booking-item-card {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 12px;
+        padding: 14px;
+        border-radius: 12px;
+      }
+      .booking-left-part {
+        width: 100%;
+      }
+      .booking-thumb {
+        width: 72px;
+        height: 56px;
+      }
+      .booking-title {
+        font-size: 0.95rem;
+      }
+      .booking-location {
+        font-size: 0.78rem;
+      }
+      .booking-meta-row {
+        font-size: 0.74rem;
+      }
+      .booking-right-part {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding-top: 10px;
+        border-top: 1px solid var(--border-light);
+      }
+      .btn-view-details {
+        padding: 6px 14px;
+        font-size: 0.8rem;
+      }
+
+      .sidebar-nav {
+        grid-template-columns: 1fr;
+      }
+
+      #toastMessage {
+        left: 14px;
+        right: 14px;
+        bottom: 16px;
+        justify-content: center;
+        text-align: center;
+      }
+    }
+
+    /* Very Small Phones (< 380px) */
+    @media (max-width: 380px) {
+      .stats-grid {
+        grid-template-columns: 1fr;
+      }
+      .brand-logo img {
+        height: 36px;
+      }
+      .profile-btn {
+        padding: 4px 10px 4px 4px;
+        font-size: 0.8rem;
       }
     }
   </style>
@@ -1110,7 +1342,7 @@
       <img th:src="@{/assets/logo2.png}" alt="StayNest">
     </a>
 
-    <!-- CENTER: Navigation Links -->
+    <!-- CENTER: Navigation Links (Desktop) -->
     <nav class="nav-links">
       <a th:href="@{/}">Home</a>
       <a th:href="@{/pgs}">Find PG</a>
@@ -1118,7 +1350,7 @@
       <a th:if="${isLoggedIn}" th:href="@{/favorites}">Favorites</a>
     </nav>
 
-    <!-- RIGHT: Notification Bell & Profile Dropdown -->
+    <!-- RIGHT: Notification Bell, Profile Dropdown & Mobile Hamburger -->
     <div class="header-right">
       <!-- Notification Icon Button -->
       <button class="btn-notification" type="button" aria-label="Notifications" onclick="showToast('You have no unread notifications.')">
@@ -1163,15 +1395,52 @@
       </div>
 
       <!-- Auth Buttons (when not logged in) -->
-      <div th:unless="${isLoggedIn}" style="display:flex;gap:10px;align-items:center;">
-        <a th:href="@{/login}" style="color:#94a3b8;text-decoration:none;font-weight:600;font-size:0.9rem;padding:7px 14px;border:1.5px solid rgba(255,255,255,.2);border-radius:8px;">Login</a>
-        <a th:href="@{/register}" style="color:white;background:#2563eb;padding:8px 18px;border-radius:8px;text-decoration:none;font-weight:700;font-size:0.9rem;">Sign Up</a>
+      <div th:unless="${isLoggedIn}" style="display:flex;gap:8px;align-items:center;">
+        <a th:href="@{/login}" style="color:#94a3b8;text-decoration:none;font-weight:600;font-size:0.85rem;padding:6px 12px;border:1.5px solid rgba(255,255,255,.2);border-radius:8px;">Login</a>
+        <a th:href="@{/register}" style="color:white;background:#2563eb;padding:7px 14px;border-radius:8px;text-decoration:none;font-weight:700;font-size:0.85rem;">Sign Up</a>
       </div>
+
+      <!-- Mobile Hamburger Toggle -->
+      <button type="button" class="btn-mobile-toggle" aria-label="Toggle navigation menu" onclick="toggleMobileNav()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="3" y1="12" x2="21" y2="12"></line>
+          <line x1="3" y1="6" x2="21" y2="6"></line>
+          <line x1="3" y1="18" x2="21" y2="18"></line>
+        </svg>
+      </button>
     </div>
+  </div>
+
+  <!-- Mobile Dropdown Navigation Drawer -->
+  <div class="mobile-nav-drawer" id="mobileNavDrawer">
+    <a th:href="@{/}">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      Home
+    </a>
+    <a th:href="@{/pgs}">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      Find PG
+    </a>
+    <a th:if="${isLoggedIn}" th:href="@{/bookings}">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      My Bookings
+    </a>
+    <a th:if="${isLoggedIn}" th:href="@{/favorites}">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+      Favorites
+    </a>
+    <a th:href="@{/profile}" class="active">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      My Profile
+    </a>
+    <a th:if="${isLoggedIn}" th:href="@{/logout}" style="color:#f87171;">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+      Logout
+    </a>
   </div>
 </header>
 
-<!-- MAIN PAGE CONTAINER (EXPANDED TO 1400px WITH PROPER ALIGNMENT) -->
+<!-- MAIN PAGE CONTAINER -->
 <main class="page-wrap">
 
   <!-- TOP HERO GREETING BANNER -->
@@ -1196,7 +1465,7 @@
         <div class="avatar-circle-lg" id="avatarDisplay"
              th:text="${profileUser != null and profileUser.name != null and !#strings.isEmpty(profileUser.name) ? #strings.substring(profileUser.name, 0, 1).toUpperCase() : (currentUser != null and !#strings.isEmpty(currentUser) ? #strings.substring(currentUser, 0, 1).toUpperCase() : 'U')}">U</div>
         <label for="avatarUploadInput" class="avatar-camera-btn" title="Change Avatar Photo">
-          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
             <circle cx="12" cy="13" r="4"></circle>
           </svg>
@@ -1274,7 +1543,7 @@
         <!-- 1. Total Bookings -->
         <a th:href="@{/bookings}" class="stat-card">
           <div class="stat-icon-box blue">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
               <line x1="16" y1="2" x2="16" y2="6"></line>
               <line x1="8" y1="2" x2="8" y2="6"></line>
@@ -1292,7 +1561,7 @@
         <!-- 2. Confirmed -->
         <a th:href="@{/bookings}" class="stat-card">
           <div class="stat-icon-box green">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
               <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
               <polyline points="22 4 12 14.01 9 11.01"></polyline>
             </svg>
@@ -1308,7 +1577,7 @@
         <!-- 3. Cancelled -->
         <a th:href="@{/bookings}" class="stat-card">
           <div class="stat-icon-box red">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
               <circle cx="12" cy="12" r="10"></circle>
               <line x1="15" y1="9" x2="9" y2="15"></line>
               <line x1="9" y1="9" x2="15" y2="15"></line>
@@ -1325,7 +1594,7 @@
         <!-- 4. Favorites -->
         <a th:href="@{/favorites}" class="stat-card">
           <div class="stat-icon-box pink">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
               <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"></path>
             </svg>
           </div>
@@ -1482,7 +1751,7 @@
               <a th:href="@{/bookings}" class="stat-link" style="font-size:0.86rem;font-weight:700;">View All &rarr;</a>
             </div>
 
-            <!-- Dynamic bookings container: renders server-side or via live client-side sync -->
+            <!-- Dynamic bookings container: automatically populated by syncLiveBookings() -->
             <div class="bookings-list" id="recentBookingsContainer">
               <!-- Thymeleaf server-side iteration fallback -->
               <th:block th:if="${(userBookings != null and !#lists.isEmpty(userBookings)) or (bookings != null and !#lists.isEmpty(bookings))}">
@@ -1496,16 +1765,16 @@
                     <div class="booking-info">
                       <h3 class="booking-title" th:text="${booking.pgName}">PG Name</h3>
                       <div class="booking-location">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:13px;height:13px;color:#ef4444;"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
                         <span th:text="${booking.pgLocation}">Location</span>
                       </div>
                       <div class="booking-meta-row">
                         <span class="booking-meta-item">
-                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;color:#94a3b8;"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
                           <span th:text="${booking.roomType != null ? booking.roomType : 'Standard'}">Sharing</span>
                         </span>
                         <span class="booking-meta-item">
-                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;color:#94a3b8;"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
                           <span th:text="${booking.bookingDate}">Date</span>
                         </span>
                       </div>
@@ -1519,7 +1788,7 @@
                 </div>
               </th:block>
 
-              <!-- Empty state fallback if no bookings rendered by server -->
+              <!-- Loading / Empty state -->
               <div class="empty-bookings-box" id="emptyBookingsMsg"
                    th:if="${(userBookings == null or #lists.isEmpty(userBookings)) and (bookings == null or #lists.isEmpty(bookings))}">
                 <p>Loading your recent bookings...</p>
@@ -1610,7 +1879,7 @@
               <a th:href="@{/bookings}" class="quick-link-tile">
                 <div class="ql-tile-left">
                   <div class="ql-icon-round blue">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                       <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
                       <line x1="16" y1="2" x2="16" y2="6"></line>
                       <line x1="8" y1="2" x2="8" y2="6"></line>
@@ -1664,6 +1933,14 @@
 
 <!-- CLIENT JAVASCRIPT FOR DYNAMIC DATA, PERSISTENCE & LIVE BOOKING SYNC -->
 <script>
+  // Mobile Navigation Drawer Toggle
+  function toggleMobileNav() {
+    const drawer = document.getElementById('mobileNavDrawer');
+    if (drawer) {
+      drawer.classList.toggle('open');
+    }
+  }
+
   // Get storage key scoped to current user email
   function getStorageKey() {
     const emailEl = document.getElementById('emailInput');
@@ -1742,7 +2019,7 @@
       const cancEl = document.getElementById('statCancelledBookings');
       if (cancEl) cancEl.textContent = cancelled;
 
-      // Update Recent Bookings list
+      // Update Recent Bookings list (with mobile-friendly flex structure)
       const container = document.getElementById('recentBookingsContainer');
       if (container && bookingsData.length > 0) {
         container.innerHTML = bookingsData.map(b => `

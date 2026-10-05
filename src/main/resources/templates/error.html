@@ -25,6 +25,14 @@
     .status{display:inline-block;background:#fee2e2;color:#dc2626;padding:4px 14px;border-radius:20px;font-size:0.85rem;font-weight:700;margin-bottom:20px;}
     .btn{display:inline-block;padding:12px 28px;background:#2563eb;color:white;border-radius:10px;text-decoration:none;font-weight:700;margin:6px;}
     .btn-out{background:white;color:#2563eb;border:2px solid #2563eb;}
+
+    @media (max-width: 640px) {
+      .nav-wrap { padding: 0 16px; }
+      nav a { display: none; }
+      nav a:first-child, nav a.btn-login { display: inline-block; margin-left: 8px; }
+      .card { padding: 36px 18px; border-radius: 16px; width: 100%; }
+      .btn { display: block; width: 100%; margin: 8px 0; }
+    }
   </style>
 </head>
 <body>

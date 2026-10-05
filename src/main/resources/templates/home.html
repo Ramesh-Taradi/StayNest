@@ -57,6 +57,28 @@
         <a class="login" th:href="@{/login}" style="background:transparent;border:1.5px solid rgba(255,255,255,0.3);color:white;">Login</a>
         <a class="login" th:href="@{/register}">Sign Up</a>
       </div>
+
+      <!-- Mobile Hamburger Button -->
+      <button class="nav-mobile-toggle" id="homeMobileNavToggle" aria-label="Toggle Navigation">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Mobile Drawer -->
+  <div class="mobile-nav-drawer" id="homeMobileDrawer">
+    <a class="active" th:href="@{/}">&#127968; Home</a>
+    <a th:href="@{/pgs}">&#128269; Find PG</a>
+    <a th:if="${isLoggedIn}" th:href="@{/bookings}">&#128215; My Bookings</a>
+    <a th:if="${isLoggedIn}" th:href="@{/favorites}">&#9829; Favorites</a>
+    <a th:if="${isLoggedIn}" th:href="@{/profile}">&#128100; My Profile</a>
+    <hr th:if="${isLoggedIn}">
+    <a th:if="${isLoggedIn}" th:href="@{/logout}" style="color:#f87171!important;">&#128682; Logout</a>
+    <div th:unless="${isLoggedIn}" style="display:flex;gap:10px;margin-top:6px;">
+      <a class="login" th:href="@{/login}" style="flex:1;text-align:center;background:transparent;border:1.5px solid rgba(255,255,255,0.3);">Login</a>
+      <a class="login" th:href="@{/register}" style="flex:1;text-align:center;">Sign Up</a>
     </div>
   </div>
 </header>
@@ -294,6 +316,14 @@
     </div>
   </div>
 </footer>
-
+<script>
+  const toggleBtn = document.getElementById('homeMobileNavToggle');
+  const drawer = document.getElementById('homeMobileDrawer');
+  if (toggleBtn && drawer) {
+    toggleBtn.addEventListener('click', () => {
+      drawer.classList.toggle('open');
+    });
+  }
+</script>
 </body>
 </html>

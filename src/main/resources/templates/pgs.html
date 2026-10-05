@@ -260,18 +260,52 @@
     }
     .empty-card h3 { color: #0f172a; margin: 8px 0 4px; font-size: 1rem; }
 
+    /* Mobile Nav */
+    .nav-mobile-toggle {
+      display: none; background: none; border: none; color: #fff; cursor: pointer; padding: 6px; border-radius: 8px;
+    }
+    .nav-mobile-toggle svg { width: 24px; height: 24px; display: block; stroke: #fff; }
+    .mobile-nav-drawer {
+      display: none; position: fixed; top: 56px; left: 0; right: 0; background: #0f172a;
+      border-bottom: 2px solid #1e293b; padding: 16px 20px 24px; flex-direction: column; gap: 10px; z-index: 999;
+      box-shadow: 0 12px 28px rgba(0,0,0,0.5);
+    }
+    .mobile-nav-drawer.open { display: flex; }
+    .mobile-nav-drawer a {
+      color: #cbd5e1; text-decoration: none; font-size: 15px; font-weight: 600; padding: 10px 14px;
+      border-radius: 8px; transition: background .15s, color .15s;
+    }
+    .mobile-nav-drawer a:hover, .mobile-nav-drawer a.active { background: rgba(255,255,255,0.08); color: #60a5fa; }
+    .mobile-nav-drawer hr { border: 0; border-top: 1px solid rgba(255,255,255,0.1); margin: 4px 0; }
+
+    /* Filter Toggle Button on Mobile */
+    .btn-toggle-filters-bar {
+      display: none; width: 100%; padding: 10px 14px; background: white; border: 1.5px solid #e2e8f0;
+      border-radius: 10px; font-weight: 700; font-size: 0.88rem; color: #0f172a;
+      align-items: center; justify-content: space-between; cursor: pointer; margin-bottom: 12px;
+      box-shadow: 0 1px 4px rgba(15,23,42,0.04); font-family: inherit;
+    }
+    .btn-toggle-filters-bar:hover { border-color: #2563eb; }
+
     /* Responsive adjustments */
     @media (max-width: 980px) {
       .main-grid { grid-template-columns: 1fr; }
       .pg-grid { grid-template-columns: repeat(2, 1fr); }
       .showing-text { position: static; margin-top: 6px; }
       .pagination-row { flex-direction: column; gap: 8px; }
+      .btn-toggle-filters-bar { display: flex; }
+      .filters-sidebar { display: none; }
+      .filters-sidebar.show-mobile { display: block; }
     }
     @media (max-width: 640px) {
+      .page-wrap { width: 100%; padding: 10px 14px 20px; }
       .pg-grid { grid-template-columns: 1fr; }
-      .top-search-form { max-width: 100%; }
-      .nav-wrap { grid-template-columns: auto auto; }
+      .title-search-row { flex-direction: column; align-items: stretch; gap: 10px; }
+      .top-search-form { max-width: 100%; min-width: 0; }
+      .nav-wrap { display: flex; justify-content: space-between; }
       .nav-wrap nav { display: none; }
+      .nav-mobile-toggle { display: inline-flex; }
+      .photo-box { height: 160px; }
     }
   </style>
 </head>
@@ -322,6 +356,28 @@
         <a th:href="@{/login}" class="btn-login">Login</a>
         <a th:href="@{/register}" class="btn-signup">Sign Up</a>
       </div>
+
+      <!-- Mobile Hamburger Button -->
+      <button class="nav-mobile-toggle" id="pgsMobileNavToggle" aria-label="Toggle Navigation">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Mobile Drawer -->
+  <div class="mobile-nav-drawer" id="pgsMobileDrawer">
+    <a th:href="@{/}">&#127968; Home</a>
+    <a class="active" th:href="@{/pgs}">&#128269; Find PG</a>
+    <a th:if="${isLoggedIn}" th:href="@{/bookings}">&#128215; My Bookings</a>
+    <a th:if="${isLoggedIn}" th:href="@{/favorites}">&#9829; Favorites</a>
+    <a th:if="${isLoggedIn}" th:href="@{/profile}">&#128100; My Profile</a>
+    <hr th:if="${isLoggedIn}">
+    <a th:if="${isLoggedIn}" th:href="@{/logout}" style="color:#f87171!important;">&#128682; Logout</a>
+    <div th:unless="${isLoggedIn}" style="display:flex;gap:10px;margin-top:6px;">
+      <a class="btn-login" th:href="@{/login}" style="flex:1;text-align:center;">Login</a>
+      <a class="btn-signup" th:href="@{/register}" style="flex:1;text-align:center;">Sign Up</a>
     </div>
   </div>
 </header>
@@ -355,11 +411,17 @@
     </form>
   </div>
 
+  <!-- Mobile Filters Toggle Button -->
+  <button type="button" class="btn-toggle-filters-bar" id="btnToggleFilters">
+    <span>&#9881; Filter &amp; Search Options</span>
+    <span id="filtersArrow">&#9660;</span>
+  </button>
+
   <!-- Main 2-Column Layout -->
   <div class="main-grid">
 
     <!-- ── LEFT: Filters Sidebar (Compact) ── -->
-    <aside class="filters-sidebar">
+    <aside class="filters-sidebar" id="filtersSidebar">
       <div class="filters-header">
         <h3>Filters</h3>
         <button type="button" class="btn-clear-all" onclick="clearAllFilters()">Clear All</button>
@@ -758,6 +820,22 @@
 
   document.addEventListener('DOMContentLoaded', () => {
     handleSort('price-asc');
+
+    const navToggle = document.getElementById('pgsMobileNavToggle');
+    const drawer = document.getElementById('pgsMobileDrawer');
+    if (navToggle && drawer) {
+      navToggle.addEventListener('click', () => drawer.classList.toggle('open'));
+    }
+
+    const filterBtn = document.getElementById('btnToggleFilters');
+    const filterSidebar = document.getElementById('filtersSidebar');
+    const arrow = document.getElementById('filtersArrow');
+    if (filterBtn && filterSidebar) {
+      filterBtn.addEventListener('click', () => {
+        const isOpen = filterSidebar.classList.toggle('show-mobile');
+        if (arrow) arrow.innerHTML = isOpen ? '&#9650;' : '&#9660;';
+      });
+    }
   });
 </script>
 

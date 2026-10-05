@@ -68,6 +68,40 @@
     .btn-main:hover{background:#1d4ed8;}
     .btn-back{display:block;text-align:center;color:#64748b;font-size:0.85rem;text-decoration:none;margin-top:8px;}
     .btn-back:hover{color:#2563eb;}
+
+    /* Mobile Nav styles */
+    .nav-mobile-toggle {
+      display: none; background: none; border: none; color: #fff; cursor: pointer; padding: 6px; border-radius: 8px;
+    }
+    .nav-mobile-toggle svg { width: 24px; height: 24px; display: block; stroke: #fff; }
+    .mobile-nav-drawer {
+      display: none; position: fixed; top: 64px; left: 0; right: 0; background: #0f172a;
+      border-bottom: 2px solid #1e293b; padding: 16px 20px 24px; flex-direction: column; gap: 10px; z-index: 999;
+      box-shadow: 0 12px 28px rgba(0,0,0,0.5);
+    }
+    .mobile-nav-drawer.open { display: flex; }
+    .mobile-nav-drawer a {
+      color: #cbd5e1; text-decoration: none; font-size: 15px; font-weight: 600; padding: 10px 14px;
+      border-radius: 8px; transition: background .15s, color .15s;
+    }
+    .mobile-nav-drawer a:hover, .mobile-nav-drawer a.active { background: rgba(255,255,255,0.08); color: #60a5fa; }
+    .mobile-nav-drawer hr { border: 0; border-top: 1px solid rgba(255,255,255,0.1); margin: 4px 0; }
+
+    /* Responsive Layout for Mobile */
+    @media (max-width: 860px) {
+      .wrap { padding: 0 16px; }
+      .layout { grid-template-columns: 1fr; gap: 20px; }
+      .price-box { position: static; order: -1; margin-bottom: 10px; }
+      .hero-img-wrap { height: 180px; border-radius: 12px; margin-bottom: 16px; }
+      .card { padding: 20px 16px; border-radius: 12px; }
+      .pg-name { font-size: 1.5rem; }
+      .room-item { flex-direction: column; align-items: stretch; gap: 14px; }
+      .room-rent { text-align: left; display: flex; align-items: center; justify-content: space-between; border-top: 1px solid #f1f5f9; padding-top: 10px; }
+      .btn-book-sm { margin-top: 0; }
+      .nav-wrap { display: flex; justify-content: space-between; padding: 0 16px; }
+      .nav-wrap nav { display: none; }
+      .nav-mobile-toggle { display: inline-flex; }
+    }
   </style>
 </head>
 <body>
@@ -116,6 +150,28 @@
         <a th:href="@{/login}" class="btn-login">Login</a>
         <a th:href="@{/register}" class="btn-signup">Sign Up</a>
       </div>
+
+      <!-- Mobile Hamburger Button -->
+      <button class="nav-mobile-toggle" id="pgDetailsMobileNavToggle" aria-label="Toggle Navigation">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Mobile Drawer -->
+  <div class="mobile-nav-drawer" id="pgDetailsMobileDrawer">
+    <a th:href="@{/}">&#127968; Home</a>
+    <a th:href="@{/pgs}">&#128269; Find PG</a>
+    <a th:if="${isLoggedIn}" th:href="@{/bookings}">&#128215; My Bookings</a>
+    <a th:if="${isLoggedIn}" th:href="@{/favorites}">&#9829; Favorites</a>
+    <a th:if="${isLoggedIn}" th:href="@{/profile}">&#128100; My Profile</a>
+    <hr th:if="${isLoggedIn}">
+    <a th:if="${isLoggedIn}" th:href="@{/logout}" style="color:#f87171!important;">&#128682; Logout</a>
+    <div th:unless="${isLoggedIn}" style="display:flex;gap:10px;margin-top:6px;">
+      <a th:href="@{/login}" class="btn-login" style="flex:1;text-align:center;">Login</a>
+      <a th:href="@{/register}" class="btn-signup" style="flex:1;text-align:center;">Sign Up</a>
     </div>
   </div>
 </header>
@@ -254,5 +310,12 @@
 
 </div><!-- /wrap -->
 
+<script>
+  const toggleBtn = document.getElementById('pgDetailsMobileNavToggle');
+  const drawer = document.getElementById('pgDetailsMobileDrawer');
+  if (toggleBtn && drawer) {
+    toggleBtn.addEventListener('click', () => drawer.classList.toggle('open'));
+  }
+</script>
 </body>
 </html>

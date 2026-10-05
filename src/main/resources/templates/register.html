@@ -2,6 +2,7 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>Register - StayNest</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
     <style>
@@ -9,15 +10,15 @@
         body { font-family: 'Inter', sans-serif; background: #f0f6ff; min-height: 100vh; display: flex; flex-direction: column; }
         .navbar {
             display: flex; align-items: center; justify-content: space-between;
-            background: #0f172a; height: 60px; padding: 0 48px;
+            background: #0f172a; height: 60px; padding: 0 24px;
         }
         .nav-logo { color: #fff; font-size: 1.45rem; font-weight: 800; text-decoration: none; }
         .nav-back { color: rgba(255,255,255,.75); font-size: 0.88rem; text-decoration: none; }
         .nav-back:hover { color: #fff; }
 
-        .page { flex: 1; display: flex; align-items: center; justify-content: center; padding: 40px 20px; }
+        .page { flex: 1; display: flex; align-items: center; justify-content: center; padding: 30px 16px; }
         .card {
-            background: #fff; border-radius: 18px; padding: 42px 40px;
+            background: #fff; border-radius: 18px; padding: 36px 30px;
             width: 100%; max-width: 420px;
             box-shadow: 0 8px 40px rgba(37,99,235,.1);
         }
@@ -42,6 +43,12 @@
         .login-link a { color: #2563eb; font-weight: 700; }
         .login-link a:hover { text-decoration: underline; }
         .alert { background: #fef2f2; border: 1px solid #fecaca; border-radius: 8px; padding: 10px 14px; font-size: 0.85rem; color: #b91c1c; margin-bottom: 18px; }
+
+        @media (max-width: 600px) {
+            .navbar { padding: 0 16px; }
+            .card { padding: 26px 18px; border-radius: 14px; }
+            .page { padding: 20px 12px; }
+        }
     </style>
 </head>
 <body>
